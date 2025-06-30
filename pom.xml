@@ -75,7 +75,7 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.28</version> <!-- opcionalmente especifique versão -->
+							<version>1.18.28</version>
 						</path>
 					</annotationProcessorPaths>
 					<source>${java.version}</source>
@@ -88,6 +88,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<mainClass>com.devdaniel.Monitor.MonitorApplication</mainClass>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>

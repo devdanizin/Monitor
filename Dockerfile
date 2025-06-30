@@ -1,28 +1,30 @@
-# Use imagem base com JDK 17
+# Imagem base com JDK 17
 FROM eclipse-temurin:17-jdk-jammy
 
-# Defina diretório de trabalho dentro do container
+# Diretório de trabalho no container
 WORKDIR /app
 
-# Copie o pom.xml, mvnw e pasta .mvn primeiro para aproveitar cache do Docker
+# Copiar arquivos de build e wrapper do Maven para cachear dependências
 COPY pom.xml mvnw ./
 COPY .mvn .mvn
 
-# Dê permissão de execução para o mvnw
+# Permissão de execução para o mvnw
 RUN chmod +x ./mvnw
 
-# Baixe dependências (primeiro para cache) e build do projeto (sem testes)
+# Baixar dependências offline para acelerar build subsequentes
 RUN ./mvnw dependency:go-offline
-RUN ./mvnw clean package -DskipTests
 
-# Copie o código-fonte após baixar dependências para evitar recompilar do zero toda vez que código mudar
+# Copiar o código fonte
 COPY src ./src
 
-# Copie o jar gerado para o local correto
+# Build do projeto sem executar testes
+RUN ./mvnw clean package -DskipTests
+
+# Copiar o jar gerado para uma localização simples
 RUN cp target/*.jar app.jar
 
-# Exponha a porta 8080 (usada pela aplicação)
+# Expor porta padrão do Spring Boot
 EXPOSE 8080
 
-# Comando para iniciar a aplicação
+# Comando para iniciar a aplicação, usando variável PORT com fallback para 8080
 ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=${PORT:-8080}"]
