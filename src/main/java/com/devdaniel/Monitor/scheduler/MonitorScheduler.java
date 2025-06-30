@@ -14,5 +14,6 @@ public class MonitorScheduler {
     @Scheduled(fixedRate = 300000) // a cada 5 minutos
     public void verificarUrls() {
         monitorService.checkAllRegisteredUrls();
+        System.out.println("enviando...");
     }
 }

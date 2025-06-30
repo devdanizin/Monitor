@@ -6,24 +6,25 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@NoArgsConstructor
-@RequiredArgsConstructor
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class MonitorTask {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
     private String url;
-
-    @NonNull
     private int statusCode;
-
-    @NonNull
     private long responseTime;
-
-    @NonNull
     private LocalDateTime checkedAt;
+
+    // Construtor manual (sem id)
+    public MonitorTask(String url, int statusCode, long responseTime, LocalDateTime checkedAt) {
+        this.url = url;
+        this.statusCode = statusCode;
+        this.responseTime = responseTime;
+        this.checkedAt = checkedAt;
+    }
 }

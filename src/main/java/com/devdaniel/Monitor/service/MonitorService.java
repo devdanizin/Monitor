@@ -26,6 +26,8 @@ public class MonitorService {
 
     public void checkAllRegisteredUrls() {
         List<MonitoredSite> sites = siteRepository.findAll();
+        System.out.println("⏱ Verificando " + sites.size() + " sites...");
+
         for (MonitoredSite site : sites) {
             String url = site.getUrl();
             MonitorTask resultado = verificarUrl(url);
