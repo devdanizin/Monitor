@@ -26,16 +26,27 @@ public class MonitorService {
 
     public void checkAllRegisteredUrls() {
         List<MonitoredSite> sites = siteRepository.findAll();
-        System.out.println("⏱ Verificando " + sites.size() + " sites em 5 minutos...");
+        System.out.println("⏱ Verificando " + sites.size() + " sites...");
 
         for (MonitoredSite site : sites) {
             String url = site.getUrl();
             MonitorTask resultado = verificarUrl(url);
             monitorRepository.save(resultado);
 
-            if (resultado.getStatusCode() == 0 || resultado.getResponseTime() > 3000) {
-                alertService.sendEmail("Possível problema de queda de assinatura. Favor verificar na hospedagem e na alocadora do domínio. Endereço: " + url);
+            boolean falhou = (resultado.getStatusCode() == 0 || resultado.getResponseTime() > 3000);
+
+            if (falhou) {
+                site.setFalhasConsecutivas(site.getFalhasConsecutivas() + 1);
+
+                if (site.getFalhasConsecutivas() >= 5) {
+                    alertService.sendEmail("🔴 Atenção: o site está com problemas há 5 tentativas consecutivas. URL: " + url);
+                    site.setFalhasConsecutivas(0);
+                }
+            } else {
+                site.setFalhasConsecutivas(0);
             }
+
+            siteRepository.save(site);
         }
     }
 

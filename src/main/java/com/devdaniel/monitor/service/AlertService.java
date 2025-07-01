@@ -21,13 +21,4 @@ public class AlertService {
         sender.send(email);
     }
 
-    @PostConstruct
-    public void testEmailOnStartup() {
-        try {
-            sendEmail("✅ Teste automático: o serviço de monitoramento foi iniciado com sucesso.");
-        } catch (Exception e) {
-            System.err.println("Falha ao enviar email no startup: " + e.getMessage());
-        }
-    }
-
 }

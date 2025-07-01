@@ -221,12 +221,10 @@
             </div>
         </form>
         <ul class="list-group" id="lista-urls" aria-live="polite" aria-atomic="true" style="max-height: 60vh; overflow-y: auto;">
-            <!-- URLs carregadas via JS -->
         </ul>
     </section>
 </main>
 
-<!-- Toast Container -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
     <div id="toast-container"></div>
 </div>
@@ -487,7 +485,7 @@
         },
         error: function (jqXHR, textStatus, errorThrown) {
           console.error("Erro ao adicionar URL:", textStatus, errorThrown);
-          showToast("Erro ao adicionar URL: " + textStatus);
+          showToast("Seu limite de sites acabou.");
         },
       });
     });

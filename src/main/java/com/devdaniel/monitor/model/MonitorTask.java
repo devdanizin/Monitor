@@ -27,4 +27,8 @@ public class MonitorTask {
         this.responseTime = responseTime;
         this.checkedAt = checkedAt;
     }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "site_id", nullable = false)
+    private MonitoredSite site;
 }

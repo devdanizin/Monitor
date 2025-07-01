@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Admin - Usuários</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        .senha-box {
+            position: relative;
+        }
+        .toggle-senha {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4">👨‍💼 Painel de Admin - Gerenciar Usuários</h2>
+
+    <div class="d-flex justify-content-between mb-3">
+        <input type="text" id="filtro" class="form-control w-50" placeholder="🔍 Buscar usuário...">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNovo">+ Novo Usuário</button>
+    </div>
+
+    <table class="table table-hover table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>Nome</th>
+            <th>Perfil</th>
+            <th>Senha</th>
+            <th>Limite</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody id="lista-usuarios"></tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="modalNovo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Novo Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-novo-usuario">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Nome</label>
+                        <input type="text" id="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3 senha-box">
+                        <label for="senha" class="form-label">Senha</label>
+                        <input type="password" id="senha" class="form-control" required>
+                        <i class="bi bi-eye toggle-senha" id="toggleNovaSenha"></i>
+                    </div>
+                    <div class="mb-3">
+                        <label for="limited" class="form-label">Limite</label>
+                        <input type="number" id="limited" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Perfil</label>
+                        <select id="role" class="form-select">
+                            <option value="USER">Usuário</option>
+                            <option value="ADMIN">Administrador</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = '/api/admin/usuarios';
+    const usuarioLogado = 'admin';
+
+    function carregarUsuarios() {
+        $.get(API_URL, function (data) {
+            const lista = $('#lista-usuarios').empty();
+            if (!data.length) {
+                lista.append('<tr><td colspan="5" class="text-center text-muted">Nenhum usuário encontrado.</td></tr>');
+                return;
+            }
+
+            data.forEach(u => {
+                const podeExcluir = u.username !== usuarioLogado && u.role !== 'ADMIN';
+                const linha = $(`
+                    <tr>
+                        <td>${u.username}</td>
+                        <td><span class="badge ${u.role === 'ADMIN' ? 'bg-danger' : 'bg-secondary'}">${u.role}</span></td>
+                        <td class="senha-box">
+                            <input type="password" readonly class="form-control form-control-sm" value="${u.password}" style="max-width:160px;">
+                            <i class="bi bi-eye toggle-senha"></i>
+                        </td>
+                        <td>${u.limited ?? '-'}</td>
+                        <td>
+                            ${podeExcluir ? `<button class="btn btn-sm btn-outline-danger btn-delete" data-id="${u.id}"><i class="bi bi-trash"></i></button>` : ''}
+                        </td>
+                    </tr>
+                `);
+
+                linha.find('.toggle-senha').click(function () {
+                    const input = $(this).siblings('input');
+                    const isPassword = input.attr('type') === 'password';
+                    input.attr('type', isPassword ? 'text' : 'password');
+                    $(this).toggleClass('bi-eye bi-eye-slash');
+                });
+
+                linha.find('.btn-delete').click(function () {
+                    const id = $(this).data('id');
+                    if (confirm('Tem certeza que deseja excluir?')) {
+                        $.ajax({
+                            url: API_URL + '/' + id,
+                            type: 'DELETE',
+                            success: carregarUsuarios,
+                            error: xhr => alert('Erro ao excluir: ' + xhr.responseText)
+                        });
+                    }
+                });
+
+                lista.append(linha);
+            });
+        });
+    }
+
+    $('#form-novo-usuario').submit(function (e) {
+        e.preventDefault();
+        const username = $('#username').val();
+        const password = $('#senha').val();
+        const role = $('#role').val();
+        const limited = $('#limited').val();
+
+        $.ajax({
+            url: API_URL,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ username, password, role, limited }),
+            success: () => {
+                $('#modalNovo').modal('hide');
+                this.reset();
+                carregarUsuarios();
+            },
+            error: xhr => alert("Erro ao criar: " + xhr.responseText)
+        });
+    });
+
+    $('#toggleNovaSenha').click(function () {
+        const input = $('#senha');
+        const isPassword = input.attr('type') === 'password';
+        input.attr('type', isPassword ? 'text' : 'password');
+        $(this).toggleClass('bi-eye bi-eye-slash');
+    });
+
+    $('#filtro').on('input', function () {
+        const termo = $(this).val().toLowerCase();
+        $('#lista-usuarios tr').each(function () {
+            const user = $(this).find('td:first').text().toLowerCase();
+            $(this).toggle(user.includes(termo));
+        });
+    });
+
+    $(document).ready(carregarUsuarios);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,7 +1,10 @@
 package com.devdaniel.monitor.controller;
 
 import com.devdaniel.monitor.model.MonitorTask;
+import com.devdaniel.monitor.model.User;
 import com.devdaniel.monitor.repository.MonitorRepository;
+import com.devdaniel.monitor.repository.UserRepository;
+import com.devdaniel.monitor.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +15,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MonitorController {
 
+    private final UserRepository userRepository;
     private final MonitorRepository repository;
 
     @GetMapping("/todos")
     public List<MonitorTask> getAllMonitors() {
-        return repository.findAll();
+        User user = userRepository.findByUsername(AuthUtil.getLoggedUsername()).orElseThrow();
+        return repository.findBySiteUser(user);
     }
+
 }
