@@ -1,7 +1,7 @@
-package com.devdaniel.Monitor.controller;
+package com.devdaniel.monitor.controller;
 
-import com.devdaniel.Monitor.model.MonitoredSite;
-import com.devdaniel.Monitor.repository.MonitoredRepository;
+import com.devdaniel.monitor.model.MonitoredSite;
+import com.devdaniel.monitor.repository.MonitoredRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

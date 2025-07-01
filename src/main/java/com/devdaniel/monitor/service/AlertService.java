@@ -1,4 +1,4 @@
-package com.devdaniel.Monitor.service;
+package com.devdaniel.monitor.service;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;

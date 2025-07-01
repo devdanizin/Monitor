@@ -1,7 +1,8 @@
-package com.devdaniel.Monitor.scheduler;
+package com.devdaniel.monitor.scheduler;
 
-import com.devdaniel.Monitor.service.MonitorService;
+import com.devdaniel.monitor.service.MonitorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +12,7 @@ public class MonitorScheduler {
 
     private final MonitorService monitorService;
 
-    @Scheduled(fixedRate = 300000) // a cada 5 minutos
+    @Scheduled(fixedRate = 60000)
     public void verificarUrls() {
         monitorService.checkAllRegisteredUrls();
         System.out.println("enviando...");

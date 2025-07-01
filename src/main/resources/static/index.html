@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Monitor Web - Dashboard Completo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background-color: #f8f9fa;
+          margin: 0;
+          height: 100vh;
+          overflow: hidden;
+        }
+
+        .sidebar {
+          height: 100vh;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 240px;
+          background-color: #212529;
+          padding-top: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          color: white;
+          box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+          z-index: 1050;
+        }
+
+        .sidebar h4 {
+          font-weight: 700;
+          font-size: 1.4rem;
+          margin-bottom: 1.5rem;
+          user-select: none;
+        }
+
+        .sidebar a {
+          color: #ced4da;
+          padding: 1rem 1.5rem;
+          text-decoration: none;
+          font-weight: 500;
+          transition: background-color 0.2s ease;
+          border-left: 4px solid transparent;
+          user-select: none;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+          background-color: #343a40;
+          color: #fff;
+          border-left-color: #0d6efd;
+          font-weight: 700;
+        }
+
+        .content {
+          margin-left: 240px;
+          height: 100vh;
+          overflow-y: auto;
+          padding: 2rem 2.5rem;
+        }
+
+        .tab-pane {
+          display: none;
+        }
+        .tab-pane.active {
+          display: block;
+        }
+
+        /* Cards de monitoramento */
+        .monitor-card {
+          border-radius: 0.5rem;
+          box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+          background-color: #fff;
+          padding: 1.25rem 1.5rem;
+          margin-bottom: 1rem;
+          transition: box-shadow 0.3s ease;
+          cursor: default;
+        }
+        .monitor-card:hover {
+          box-shadow: 0 0.5rem 1rem rgba(13, 110, 253, 0.15);
+        }
+
+        .monitor-url {
+          font-size: 1.1rem;
+          font-weight: 600;
+          word-break: break-word;
+        }
+
+        .status-badge {
+          font-size: 0.85rem;
+          padding: 0.3em 0.7em;
+          border-radius: 0.5rem;
+          font-weight: 700;
+          user-select: none;
+        }
+
+        .status-ok {
+          background-color: #d1e7dd;
+          color: #0f5132;
+        }
+
+        .status-fail {
+          background-color: #f8d7da;
+          color: #842029;
+        }
+
+        .monitor-meta {
+          font-size: 0.9rem;
+          color: #6c757d;
+          margin-top: 0.5rem;
+          user-select: none;
+        }
+
+        /* Botão de excluir URLs */
+        .btn-sm {
+          font-size: 0.75rem;
+          padding: 0.25rem 0.5rem;
+        }
+
+        /* Formulário URL */
+        #url-form .input-group {
+          max-width: 480px;
+        }
+
+        /* Toasts */
+        #toast-container {
+          z-index: 1100;
+        }
+
+        /* Responsividade */
+        @media (max-width: 767.98px) {
+          .sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            padding: 0.5rem;
+            overflow-x: auto;
+          }
+          .sidebar a {
+            padding: 0.5rem 1rem;
+            border-left: none;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+          }
+          .sidebar a.active {
+            border-left: none;
+            border-bottom-color: #0d6efd;
+          }
+          .content {
+            margin-left: 0;
+            padding: 1rem 1rem 3rem;
+          }
+          .monitor-card {
+            padding: 1rem 1rem;
+          }
+        }
+    </style>
+</head>
+<body>
+<nav class="sidebar" role="navigation" aria-label="Menu principal">
+    <h4 class="text-center mb-3">📊 MonitorWeb</h4>
+    <a href="#" class="nav-link active" data-tab="dashboard" tabindex="0" id="dashboard-tab">Dashboard</a>
+    <a href="#" class="nav-link" data-tab="monitoramentos" tabindex="0" id="monitoramentos-tab">Monitoramentos</a>
+    <a href="#" class="nav-link" data-tab="urls" tabindex="0" id="urls-tab">Gerenciar URLs</a>
+</nav>
+
+<main class="content">
+    <section id="dashboard" class="tab-pane active" role="tabpanel" aria-labelledby="dashboard-tab" tabindex="0">
+        <h2 class="mb-4">Visão Geral</h2>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="data-inicial" class="form-label">Filtrar por período:</label>
+                <input type="date" id="data-inicial" class="form-control mb-2" aria-label="Data inicial filtro" />
+                <input type="date" id="data-final" class="form-control" aria-label="Data final filtro" />
+            </div>
+            <div class="col-md-6">
+                <label for="filtro-status" class="form-label">Filtrar por status:</label>
+                <select id="filtro-status" class="form-select" aria-label="Filtro de status">
+                    <option value="todos" selected>Todos</option>
+                    <option value="ok">OK (2xx)</option>
+                    <option value="falha">Falha</option>
+                </select>
+            </div>
+        </div>
+
+        <canvas id="statusChart" aria-label="Gráfico de status de monitoramento" role="img" style="max-height:300px;"></canvas>
+
+    </section>
+
+    <section id="monitoramentos" class="tab-pane" role="tabpanel" aria-labelledby="monitoramentos-tab" tabindex="0">
+        <h2 class="mb-4">Histórico de Monitoramento</h2>
+        <div id="monitor-container" aria-live="polite" aria-atomic="true" tabindex="0" style="max-height: 70vh; overflow-y: auto;">
+            <!-- Cards preenchidos via JS -->
+        </div>
+    </section>
+
+    <section id="urls" class="tab-pane" role="tabpanel" aria-labelledby="urls-tab" tabindex="0">
+        <h2 class="mb-4">Gerenciar URLs</h2>
+        <form id="url-form" class="mb-4" aria-label="Adicionar nova URL para monitoramento">
+            <div class="input-group">
+                <input
+                        type="url"
+                        class="form-control"
+                        id="nova-url"
+                        placeholder="https://exemplo.com"
+                        aria-required="true"
+                        aria-describedby="btn-adicionar-url"
+                        required
+                />
+                <button id="btn-adicionar-url" class="btn btn-primary" type="submit" aria-label="Adicionar URL">
+                    Adicionar
+                </button>
+            </div>
+        </form>
+        <ul class="list-group" id="lista-urls" aria-live="polite" aria-atomic="true" style="max-height: 60vh; overflow-y: auto;">
+            <!-- URLs carregadas via JS -->
+        </ul>
+    </section>
+</main>
+
+<!-- Toast Container -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
+    <div id="toast-container"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Gerenciar abas
+    $(".nav-link").click(function (e) {
+      e.preventDefault();
+      $(".nav-link").removeClass("active");
+      $(this).addClass("active");
+      $(".tab-pane").removeClass("active");
+      const tabId = $(this).data("tab");
+      $("#" + tabId).addClass("active");
+      $("#" + tabId).focus();
+    });
+
+    const API_BASE = "http://localhost:8080";
+
+    function showToast(message, type = 'danger') {
+      const toastId = `toast-${Date.now()}`;
+      const bgClass = type === 'success' ? 'text-bg-success' : 'text-bg-danger';
+      const toastHtml = `
+        <div id="${toastId}" class="toast align-items-center ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+          </div>
+        </div>
+      `;
+      $("#toast-container").append(toastHtml);
+      const toastEl = document.getElementById(toastId);
+      const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+      toast.show();
+      toastEl.addEventListener("hidden.bs.toast", () => toastEl.remove());
+    }
+
+    function formatStatus(code) {
+      if (code >= 200 && code < 300) {
+        return `<span class="status-badge status-ok" title="Resposta OK">${code}</span>`;
+      } else if (code === 0) {
+        return `<span class="status-badge status-fail" title="Sem resposta">Falha</span>`;
+      } else {
+        return `<span class="status-badge status-fail" title="Erro HTTP">${code}</span>`;
+      }
+    }
+
+    function formatTime(ms) {
+      return ms > 0 ? `${ms} ms` : '-';
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      return dateStr.replace('T', ' ').split('.')[0];
+    }
+
+    // Dados globais carregados para reutilização e filtros
+    let monitorData = [];
+
+    function carregarMonitoramentos() {
+      $.ajax({
+        url: `${API_BASE}/api/monitor/todos`,
+        type: "GET",
+        success: function (data) {
+          monitorData = data;
+          atualizarMonitoramentos();
+          atualizarGrafico();
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error("Erro ao carregar monitoramentos:", textStatus, errorThrown);
+          showToast("Erro ao carregar monitoramentos: " + textStatus);
+        },
+      });
+    }
+
+    function atualizarMonitoramentos() {
+      const container = $("#monitor-container").empty();
+
+      // Aplicar filtros
+      let filtered = monitorData.slice();
+      const dataInicial = $("#data-inicial").val();
+      const dataFinal = $("#data-final").val();
+      const filtroStatus = $("#filtro-status").val();
+
+      if (dataInicial) {
+        filtered = filtered.filter(m => new Date(m.checkedAt) >= new Date(dataInicial));
+      }
+      if (dataFinal) {
+        // Ajusta para incluir o dia final completo
+        let dtFinal = new Date(dataFinal);
+        dtFinal.setHours(23,59,59,999);
+        filtered = filtered.filter(m => new Date(m.checkedAt) <= dtFinal);
+      }
+      if (filtroStatus === "ok") {
+        filtered = filtered.filter(m => m.statusCode >= 200 && m.statusCode < 300);
+      } else if (filtroStatus === "falha") {
+        filtered = filtered.filter(m => !(m.statusCode >= 200 && m.statusCode < 300));
+      }
+
+      if (!filtered.length) {
+        container.append('<p class="text-muted">Nenhum monitoramento encontrado para os filtros selecionados.</p>');
+        return;
+      }
+
+      filtered.forEach(({ url, statusCode, responseTime, checkedAt }) => {
+        container.append(`
+          <article class="monitor-card" tabindex="0" aria-label="Monitoramento da URL ${url}">
+            <div class="monitor-url">${url}</div>
+            <div>
+              Status: ${formatStatus(statusCode)} &nbsp;&nbsp;
+              Tempo: <span title="Tempo de resposta">${formatTime(responseTime)}</span>
+            </div>
+            <div class="monitor-meta">Verificado em: ${formatDate(checkedAt)}</div>
+          </article>
+        `);
+      });
+    }
+
+    let chart = null;
+
+    function atualizarGrafico() {
+      if (!monitorData.length) return;
+
+      // Agrupar dados por dia e status
+      const countsByDate = {};
+
+      // Pegamos a data inicial e final do filtro para limitar o gráfico (últimos 7 dias padrão)
+      const dataInicial = $("#data-inicial").val() ? new Date($("#data-inicial").val()) : null;
+      const dataFinal = $("#data-final").val() ? new Date($("#data-final").val()) : new Date();
+
+      // Se não especificado, pega últimos 7 dias
+      const dataMin = dataInicial || new Date(dataFinal.getTime() - (7*24*60*60*1000));
+      const dataMax = dataFinal;
+
+      // Inicializa os dias no range
+      for(let d = new Date(dataMin); d <= dataMax; d.setDate(d.getDate() + 1)) {
+        const key = d.toISOString().slice(0,10);
+        countsByDate[key] = { ok: 0, falha: 0 };
+      }
+
+      // Contar status por dia
+      monitorData.forEach(m => {
+        const dateKey = m.checkedAt.slice(0,10);
+        const dateObj = new Date(dateKey);
+        if(dateObj < dataMin || dateObj > dataMax) return; // fora do range
+        if (!(dateKey in countsByDate)) countsByDate[dateKey] = { ok:0, falha:0 };
+
+        if (m.statusCode >= 200 && m.statusCode < 300) {
+          countsByDate[dateKey].ok++;
+        } else {
+          countsByDate[dateKey].falha++;
+        }
+      });
+
+      const labels = Object.keys(countsByDate).sort();
+      const okData = labels.map(date => countsByDate[date].ok);
+      const failData = labels.map(date => countsByDate[date].falha);
+
+      const ctx = document.getElementById('statusChart').getContext('2d');
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'OK (2xx)',
+              data: okData,
+              backgroundColor: 'rgba(40, 167, 69, 0.7)', // verde
+              borderColor: 'rgba(40, 167, 69, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Falha',
+              data: failData,
+              backgroundColor: 'rgba(220, 53, 69, 0.7)', // vermelho
+              borderColor: 'rgba(220, 53, 69, 1)',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          stacked: true,
+          scales: {
+            x: { stacked: true },
+            y: {
+              stacked: true,
+              beginAtZero: true,
+              ticks: { precision:0 }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: { boxWidth: 15, padding: 15 }
+            },
+            tooltip: {
+              enabled: true,
+              mode: 'index',
+              intersect: false,
+            }
+          }
+        }
+      });
+    }
+
+    function carregarUrls() {
+      $.ajax({
+        url: `${API_BASE}/api/sites`,
+        type: "GET",
+        success: function (data) {
+          const lista = $("#lista-urls").empty();
+          if (!data.length) {
+            lista.append('<li class="list-group-item text-muted">Nenhuma URL cadastrada.</li>');
+            return;
+          }
+          data.forEach(({ id, url }) => {
+            lista.append(`
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="text-truncate" style="max-width: 85%;">${url}</span>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  aria-label="Excluir URL ${url}"
+                  onclick="removerUrl(${id})"
+                  title="Excluir"
+                >
+                  &times;
+                </button>
+              </li>
+            `);
+          });
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error("Erro ao carregar URLs:", textStatus, errorThrown);
+          showToast("Erro ao carregar URLs: " + textStatus);
+        },
+      });
+    }
+
+    $("#url-form").submit(function (e) {
+      e.preventDefault();
+      const url = $("#nova-url").val();
+      $.ajax({
+        url: `${API_BASE}/api/sites`,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ url }),
+        success: function () {
+          $("#nova-url").val("");
+          carregarUrls();
+          carregarMonitoramentos();
+          showToast("URL adicionada com sucesso!", "success");
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error("Erro ao adicionar URL:", textStatus, errorThrown);
+          showToast("Erro ao adicionar URL: " + textStatus);
+        },
+      });
+    });
+
+    function removerUrl(id) {
+      if (!confirm("Confirma exclusão desta URL?")) return;
+      $.ajax({
+        url: `${API_BASE}/api/sites/${id}`,
+        type: "DELETE",
+        success: function () {
+          carregarUrls();
+          showToast("URL removida com sucesso!", "success");
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error("Erro ao remover URL:", textStatus, errorThrown);
+          showToast("Erro ao remover URL: " + textStatus);
+        },
+      });
+    }
+
+    // Atualiza o histórico e gráfico quando filtro muda
+    $("#data-inicial, #data-final, #filtro-status").change(function() {
+      atualizarMonitoramentos();
+      atualizarGrafico();
+    });
+
+    // Atualização automática a cada 10 segundos
+    setInterval(() => {
+      carregarMonitoramentos();
+      carregarUrls();
+    }, 10000); // 10 segundos
+
+    // Inicialização
+    $(document).ready(() => {
+      carregarMonitoramentos();
+      carregarUrls();
+    });
+</script>
+</body>
+</html>

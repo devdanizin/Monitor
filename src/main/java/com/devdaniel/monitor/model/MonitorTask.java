@@ -1,4 +1,4 @@
-package com.devdaniel.Monitor.model;
+package com.devdaniel.monitor.model;
 
 import jakarta.persistence.*;
 import lombok.*;

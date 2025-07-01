@@ -1,9 +1,9 @@
-package com.devdaniel.Monitor.service;
+package com.devdaniel.monitor.service;
 
-import com.devdaniel.Monitor.model.MonitorTask;
-import com.devdaniel.Monitor.model.MonitoredSite;
-import com.devdaniel.Monitor.repository.MonitorRepository;
-import com.devdaniel.Monitor.repository.MonitoredRepository;
+import com.devdaniel.monitor.model.MonitorTask;
+import com.devdaniel.monitor.model.MonitoredSite;
+import com.devdaniel.monitor.repository.MonitorRepository;
+import com.devdaniel.monitor.repository.MonitoredRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ public class MonitorService {
 
     public void checkAllRegisteredUrls() {
         List<MonitoredSite> sites = siteRepository.findAll();
-        System.out.println("⏱ Verificando " + sites.size() + " sites...");
+        System.out.println("⏱ Verificando " + sites.size() + " sites em 5 minutos...");
 
         for (MonitoredSite site : sites) {
             String url = site.getUrl();
@@ -34,7 +34,7 @@ public class MonitorService {
             monitorRepository.save(resultado);
 
             if (resultado.getStatusCode() == 0 || resultado.getResponseTime() > 3000) {
-                alertService.sendEmail("Alerta: Problema com " + url);
+                alertService.sendEmail("Possível problema de queda de assinatura. Favor verificar na hospedagem e na alocadora do domínio. Endereço: " + url);
             }
         }
     }
