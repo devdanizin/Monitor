@@ -5,9 +5,9 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: senha_do_postgres
-      POSTGRES_DB: monitor
+      POSTGRES_USER: monitoruser
+      POSTGRES_PASSWORD: monitorpass
+      POSTGRES_DB: monitorweb
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -18,9 +18,9 @@ services:
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/monitor
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: senha_do_postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/monitorweb
+      SPRING_DATASOURCE_USERNAME: monitoruser
+      SPRING_DATASOURCE_PASSWORD: monitorpass
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
     ports:
