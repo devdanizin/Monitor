@@ -26,6 +26,7 @@ services:
     ports:
       - "8080:8080"
     restart: on-failure
+    command: ["sh", "-c", "./wait-for-postgres.sh postgres 5432 -- java -jar app.jar"]
 
 volumes:
   pgdata:

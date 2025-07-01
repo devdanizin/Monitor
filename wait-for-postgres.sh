@@ -1,4 +1,5 @@
 #!/bin/sh
+
 # wait-for-postgres.sh
 
 set -e
@@ -6,14 +7,13 @@ set -e
 host="$1"
 port="$2"
 shift 2
-cmd="$@"
 
-echo "Esperando o banco de dados $host:$port ficar disponível..."
+echo "Waiting for PostgreSQL at $host:$port..."
 
 while ! nc -z "$host" "$port"; do
-  sleep 1
+  echo "PostgreSQL is unavailable - sleeping"
+  sleep 2
 done
 
-echo "Banco disponível! Iniciando a aplicação..."
-
-exec $cmd
+echo "PostgreSQL is up - executing command"
+exec "$@"
