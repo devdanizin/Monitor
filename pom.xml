@@ -95,7 +95,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>com.devdaniel.Monitor.MonitorApplication</mainClass>
+					<mainClass>com.devdaniel.monitor.MonitorApplication</mainClass>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
