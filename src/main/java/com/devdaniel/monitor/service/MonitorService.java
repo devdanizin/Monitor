@@ -1,31 +1,28 @@
 package com.devdaniel.monitor.service;
 
+import com.devdaniel.monitor.mapper.MonitorTaskMapper;
 import com.devdaniel.monitor.model.MonitorTask;
 import com.devdaniel.monitor.model.MonitoredSite;
 import com.devdaniel.monitor.model.User;
 import com.devdaniel.monitor.repository.MonitorRepository;
 import com.devdaniel.monitor.repository.MonitoredRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 @Service
+@RequiredArgsConstructor
 public class MonitorService {
 
-    @Autowired
-    private MonitorRepository monitorRepository;
-
-    @Autowired
-    private MonitoredRepository siteRepository;
-
-    @Autowired
-    private AlertService alertService;
+    private final MonitorRepository monitorRepository;
+    private final MonitoredRepository siteRepository;
+    private final AlertService alertService;
+    private final MonitorTaskMapper taskMapper;
 
     @Transactional
     public void checkAllRegisteredUrls() {
@@ -37,10 +34,6 @@ public class MonitorService {
             MonitorTask resultado = verificarUrl(url);
             resultado.setSite(site);
             monitorRepository.save(resultado);
-
-            User dono1 = site.getUser();  // <-- Aqui, User será inicializado pois a sessão está aberta
-            String mensagem1 = "🔴 Atenção: o site " + url + " está com problemas há 5 tentativas consecutivas.";
-            alertService.sendAlertToUser(dono1, mensagem1);
 
             boolean falhou = (resultado.getStatusCode() == 0 || resultado.getResponseTime() > 3000);
 
