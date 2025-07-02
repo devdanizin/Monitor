@@ -17,7 +17,7 @@ import java.util.*;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepo;
-    private final UserValidator userValidator;
+    //private final UserValidator userValidator;
 
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
