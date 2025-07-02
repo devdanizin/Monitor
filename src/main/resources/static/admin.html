@@ -1,31 +1,103 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Painel de Admin - Usuários</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <style>
-        .senha-box {
-            position: relative;
+        body {
+          background: #f8f9fa;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
+        h2 {
+          color: #2c3e50;
+          font-weight: 700;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+          user-select: none;
+          animation: fadeInDown 0.7s ease forwards;
+        }
+
+        .container {
+          max-width: 960px;
+          animation: fadeIn 0.8s ease forwards;
+        }
+
+        .senha-box {
+          position: relative;
+        }
+
         .toggle-senha {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            user-select: none;
+          position: absolute;
+          top: 50%;
+          right: 1rem;
+          transform: translateY(-50%);
+          cursor: pointer;
+          user-select: none;
+          font-size: 1.3rem;
+          color: #6c757d;
+          transition: color 0.3s ease;
+        }
+        .toggle-senha:hover {
+          color: #0d6efd;
+        }
+
+        /* Botão Novo Usuário com leve hover */
+        .btn-success {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn-success:hover {
+          transform: scale(1.05);
+          box-shadow: 0 0 8px rgba(25, 135, 84, 0.6);
+        }
+
+        /* Tabela animada */
+        table.table-hover tbody tr {
+          opacity: 0;
+          transform: translateY(10px);
+          animation: fadeInUp 0.5s ease forwards;
+        }
+        table.table-hover tbody tr:nth-child(even) {
+          animation-delay: 0.2s;
+        }
+        table.table-hover tbody tr:nth-child(odd) {
+          animation-delay: 0.4s;
+        }
+
+        /* Modal com fade e zoom */
+        .modal-content {
+          border-radius: 1rem;
+          box-shadow: 0 0 20px rgba(0,0,0,0.1);
+          animation: zoomIn 0.35s ease forwards;
+        }
+
+        /* Animações Keyframes */
+        @keyframes fadeInDown {
+          from {opacity: 0; transform: translateY(-15px);}
+          to {opacity: 1; transform: translateY(0);}
+        }
+        @keyframes fadeIn {
+          from {opacity: 0;}
+          to {opacity: 1;}
+        }
+        @keyframes fadeInUp {
+          from {opacity: 0; transform: translateY(10px);}
+          to {opacity: 1; transform: translateY(0);}
+        }
+        @keyframes zoomIn {
+          from {opacity: 0; transform: scale(0.9);}
+          to {opacity: 1; transform: scale(1);}
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
 <div class="container mt-5">
     <h2 class="mb-4">👨‍💼 Painel de Admin - Gerenciar Usuários</h2>
 
     <div class="d-flex justify-content-between mb-3">
-        <input type="text" id="filtro" class="form-control w-50" placeholder="🔍 Buscar usuário...">
+        <input type="text" id="filtro" class="form-control w-50" placeholder="🔍 Buscar usuário..." />
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNovo">+ Novo Usuário</button>
     </div>
 
@@ -43,36 +115,80 @@
     </table>
 </div>
 
+<!-- Modal Adicionar Usuário -->
 <div class="modal fade" id="modalNovo" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Adicionar Novo Usuário</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-4">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fw-bold text-primary">➕ Adicionar Novo Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <div class="modal-body">
-                <form id="form-novo-usuario">
+            <div class="modal-body px-5 pt-0 pb-4">
+                <form id="form-novo-usuario" class="needs-validation" novalidate>
                     <div class="mb-3">
-                        <label for="username" class="form-label">Nome</label>
-                        <input type="text" id="username" class="form-control" required>
+                        <label for="username" class="form-label fw-semibold">Nome</label>
+                        <input
+                                type="text"
+                                id="username"
+                                class="form-control form-control-lg"
+                                placeholder="Digite o nome"
+                                required
+                        />
+                        <div class="invalid-feedback">Por favor, insira o nome.</div>
                     </div>
-                    <div class="mb-3 senha-box">
-                        <label for="senha" class="form-label">Senha</label>
-                        <input type="password" id="senha" class="form-control" required>
-                        <i class="bi bi-eye toggle-senha" id="toggleNovaSenha"></i>
+
+                    <div class="mb-3 position-relative senha-box">
+                        <label for="senha" class="form-label fw-semibold">Senha</label>
+                        <input
+                                type="password"
+                                id="senha"
+                                class="form-control form-control-lg"
+                                placeholder="Digite a senha"
+                                required
+                        />
+                        <i
+                                class="bi bi-eye toggle-senha position-absolute top-50 end-3 translate-middle-y"
+                                style="cursor:pointer; user-select:none; font-size: 1.25rem;"
+                                id="toggleNovaSenha"
+                                aria-label="Mostrar/ocultar senha"
+                        ></i>
+                        <div class="invalid-feedback">Por favor, insira a senha.</div>
                     </div>
+
                     <div class="mb-3">
-                        <label for="limited" class="form-label">Limite</label>
-                        <input type="number" id="limited" class="form-control" required>
+                        <label for="discord_channel_id" class="form-label fw-semibold">Discord Channel ID</label>
+                        <input
+                                type="text"
+                                id="discord_channel_id"
+                                class="form-control form-control-lg"
+                                placeholder="ID do canal Discord"
+                                required
+                        />
+                        <div class="invalid-feedback">Por favor, insira o Discord Channel ID.</div>
                     </div>
+
                     <div class="mb-3">
-                        <label for="role" class="form-label">Perfil</label>
-                        <select id="role" class="form-select">
-                            <option value="USER">Usuário</option>
+                        <label for="limited" class="form-label fw-semibold">Limite</label>
+                        <input
+                                type="number"
+                                id="limited"
+                                class="form-control form-control-lg"
+                                placeholder="Digite o limite"
+                                required
+                                min="0"
+                        />
+                        <div class="invalid-feedback">Por favor, insira um limite válido.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="role" class="form-label fw-semibold">Perfil</label>
+                        <select id="role" class="form-select form-select-lg">
+                            <option value="USER" selected>Usuário</option>
                             <option value="ADMIN">Administrador</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-semibold shadow-sm">Salvar</button>
                 </form>
             </div>
         </div>
@@ -84,92 +200,102 @@
     const usuarioLogado = 'admin';
 
     function carregarUsuarios() {
-        $.get(API_URL, function (data) {
-            const lista = $('#lista-usuarios').empty();
-            if (!data.length) {
-                lista.append('<tr><td colspan="5" class="text-center text-muted">Nenhum usuário encontrado.</td></tr>');
-                return;
+      $.get(API_URL, function (data) {
+        const lista = $('#lista-usuarios').empty();
+        if (!data.length) {
+          lista.append('<tr><td colspan="5" class="text-center text-muted">Nenhum usuário encontrado.</td></tr>');
+          return;
+        }
+
+        data.forEach((u, i) => {
+          const podeExcluir = u.username !== usuarioLogado && u.role !== 'ADMIN';
+          const linha = $(`
+            <tr style="animation-delay: ${i * 0.1}s;">
+              <td>${u.username}</td>
+              <td><span class="badge ${u.role === 'ADMIN' ? 'bg-danger' : 'bg-secondary'}">${u.role}</span></td>
+              <td class="senha-box">
+                <input type="password" readonly class="form-control form-control-sm" value="${u.password}" style="max-width:160px;" />
+                <i class="bi bi-eye toggle-senha"></i>
+              </td>
+              <td>${u.limited ?? '-'}</td>
+              <td>
+                ${podeExcluir ? `<button class="btn btn-sm btn-outline-danger btn-delete" data-id="${u.id}" title="Excluir usuário"><i class="bi bi-trash"></i></button>` : ''}
+              </td>
+            </tr>
+          `);
+
+          linha.find('.toggle-senha').click(function () {
+            const input = $(this).siblings('input');
+            const isPassword = input.attr('type') === 'password';
+            input.attr('type', isPassword ? 'text' : 'password');
+            $(this).toggleClass('bi-eye bi-eye-slash');
+          });
+
+          linha.find('.btn-delete').click(function () {
+            const id = $(this).data('id');
+            if (confirm('Tem certeza que deseja excluir?')) {
+              $.ajax({
+                url: API_URL + '/' + id,
+                type: 'DELETE',
+                success: carregarUsuarios,
+                error: (xhr) => alert('Erro ao excluir: ' + xhr.responseText),
+              });
             }
+          });
 
-            data.forEach(u => {
-                const podeExcluir = u.username !== usuarioLogado && u.role !== 'ADMIN';
-                const linha = $(`
-                    <tr>
-                        <td>${u.username}</td>
-                        <td><span class="badge ${u.role === 'ADMIN' ? 'bg-danger' : 'bg-secondary'}">${u.role}</span></td>
-                        <td class="senha-box">
-                            <input type="password" readonly class="form-control form-control-sm" value="${u.password}" style="max-width:160px;">
-                            <i class="bi bi-eye toggle-senha"></i>
-                        </td>
-                        <td>${u.limited ?? '-'}</td>
-                        <td>
-                            ${podeExcluir ? `<button class="btn btn-sm btn-outline-danger btn-delete" data-id="${u.id}"><i class="bi bi-trash"></i></button>` : ''}
-                        </td>
-                    </tr>
-                `);
-
-                linha.find('.toggle-senha').click(function () {
-                    const input = $(this).siblings('input');
-                    const isPassword = input.attr('type') === 'password';
-                    input.attr('type', isPassword ? 'text' : 'password');
-                    $(this).toggleClass('bi-eye bi-eye-slash');
-                });
-
-                linha.find('.btn-delete').click(function () {
-                    const id = $(this).data('id');
-                    if (confirm('Tem certeza que deseja excluir?')) {
-                        $.ajax({
-                            url: API_URL + '/' + id,
-                            type: 'DELETE',
-                            success: carregarUsuarios,
-                            error: xhr => alert('Erro ao excluir: ' + xhr.responseText)
-                        });
-                    }
-                });
-
-                lista.append(linha);
-            });
+          lista.append(linha);
         });
+      });
     }
 
     $('#form-novo-usuario').submit(function (e) {
-        e.preventDefault();
-        const username = $('#username').val();
-        const password = $('#senha').val();
-        const role = $('#role').val();
-        const limited = $('#limited').val();
+      e.preventDefault();
+      if (!this.checkValidity()) {
+        e.stopPropagation();
+        $(this).addClass('was-validated');
+        return;
+      }
+      const username = $('#username').val();
+      const password = $('#senha').val();
+      const role = $('#role').val();
+      const limited = $('#limited').val();
+      const discord_channel_id = $('#discord_channel_id').val();
 
-        $.ajax({
-            url: API_URL,
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ username, password, role, limited }),
-            success: () => {
-                $('#modalNovo').modal('hide');
-                this.reset();
-                carregarUsuarios();
-            },
-            error: xhr => alert("Erro ao criar: " + xhr.responseText)
-        });
+      $.ajax({
+        url: API_URL,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ username, password, role, limited, discord_channel_id }),
+        success: () => {
+          $('#modalNovo').modal('hide');
+          this.reset();
+          $(this).removeClass('was-validated');
+          carregarUsuarios();
+        },
+        error: (xhr) => alert('Erro ao criar: ' + xhr.responseText),
+      });
     });
 
     $('#toggleNovaSenha').click(function () {
-        const input = $('#senha');
-        const isPassword = input.attr('type') === 'password';
-        input.attr('type', isPassword ? 'text' : 'password');
-        $(this).toggleClass('bi-eye bi-eye-slash');
+      const input = $('#senha');
+      const isPassword = input.attr('type') === 'password';
+      input.attr('type', isPassword ? 'text' : 'password');
+      $(this).toggleClass('bi-eye bi-eye-slash');
     });
 
     $('#filtro').on('input', function () {
-        const termo = $(this).val().toLowerCase();
-        $('#lista-usuarios tr').each(function () {
-            const user = $(this).find('td:first').text().toLowerCase();
-            $(this).toggle(user.includes(termo));
-        });
+      const termo = $(this).val().toLowerCase();
+      $('#lista-usuarios tr').each(function () {
+        const user = $(this).find('td:first').text().toLowerCase();
+        $(this).toggle(user.includes(termo));
+      });
     });
 
-    $(document).ready(carregarUsuarios);
+    $(document).ready(() => {
+      carregarUsuarios();
+    });
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

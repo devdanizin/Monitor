@@ -23,4 +23,9 @@ public class AuthController {
         userRepository.save(user);
         return "Usuário registrado com sucesso!";
     }
+
+    @DeleteMapping("/all")
+    public void deletar(@PathVariable Long id) {
+        userRepository.deleteAll();
+    }
 }
