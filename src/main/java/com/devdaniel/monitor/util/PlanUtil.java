@@ -19,5 +19,5 @@ public class PlanUtil {
     //    return userRepository.findByUsername(user.getUsername())
     //            .map(u -> Boolean.TRUE.equals(u.getPlan()))
     //            .orElse(false);
-    }
+    //}
 }
