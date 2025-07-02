@@ -88,12 +88,13 @@
 <div class="container mt-5">
     <h2 class="mb-4">👨‍💼 Painel de Admin - Gerenciar Usuários</h2>
 
-    <div class="d-flex justify-content-between mb-3">
+    <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
         <input type="text" id="filtro" class="form-control w-50" placeholder="🔍 Buscar usuário..." />
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNovo">+ Novo Usuário</button>
+        <button id="btnExportarCSV" class="btn btn-outline-primary">📥 Exportar CSV</button>
     </div>
 
-    <table class="table table-hover table-striped">
+    <table class="table table-hover table-striped align-middle">
         <thead class="table-dark">
         <tr>
             <th>Nome</th>
@@ -180,6 +181,11 @@
                         </select>
                     </div>
 
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="plan" checked>
+                        <label class="form-check-label fw-semibold" for="plan">Plano Ativo</label>
+                    </div>
+
                     <button type="submit" class="btn btn-primary btn-lg w-100 fw-semibold shadow-sm">Salvar</button>
                 </form>
             </div>
@@ -191,12 +197,12 @@
 <div class="modal fade" id="modalVisualizar" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow-lg rounded-4">
-            <div class="modal-header border-bottom-0">
+            <div class="modal-header border-bottom-0 d-flex justify-content-between align-items-center">
                 <h5 class="modal-title fw-bold text-primary">👁️ Visualizar Usuário</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body px-5 pt-0 pb-4">
-                <dl class="row mb-0">
+                <dl class="row mb-3">
                     <dt class="col-sm-4">Nome:</dt>
                     <dd class="col-sm-8" id="viewUsername"></dd>
 
@@ -209,6 +215,13 @@
                     <dt class="col-sm-4">Discord Channel ID:</dt>
                     <dd class="col-sm-8" id="viewDiscordChannelId"></dd>
                 </dl>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="viewPlan">
+                    <label class="form-check-label fw-semibold" for="viewPlan">Plano Ativo</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnSalvarPlan" type="button" class="btn btn-primary">Salvar Alteração do Plano</button>
             </div>
         </div>
     </div>
@@ -239,6 +252,7 @@
     const usuarioLogado = 'admin';
 
     let usuarioParaExcluirId = null;
+    let usuarioVisualizadoId = null;
 
     function carregarUsuarios() {
       $.get(API_URL, function (data) {
@@ -266,6 +280,7 @@
             </tr>
           `);
 
+          // Toggle senha mostrar/ocultar
           linha.find('.toggle-senha').click(function () {
             const input = $(this).siblings('input');
             const isPassword = input.attr('type') === 'password';
@@ -273,18 +288,20 @@
             $(this).toggleClass('bi-eye bi-eye-slash');
           });
 
+          // Visualizar usuário (modal)
           linha.find('.btn-view').click(function () {
-            // Popular modal com dados do usuário clicado
+            usuarioVisualizadoId = u.id;
             $('#viewUsername').text(u.username);
             $('#viewRole').text(u.role);
             $('#viewLimited').text(u.limited ?? '-');
             $('#viewDiscordChannelId').text(u.discordChannelId ?? '-');
+            $('#viewPlan').prop('checked', !!u.plan);
 
-            // Abrir modal de visualização
             const modalVisualizar = new bootstrap.Modal(document.getElementById('modalVisualizar'));
             modalVisualizar.show();
           });
 
+          // Excluir usuário
           linha.find('.btn-delete').click(function () {
             usuarioParaExcluirId = $(this).data('id');
             const usernameExcluir = $(this).data('username');
@@ -329,16 +346,18 @@
       const username = $('#username').val();
       const password = $('#senha').val();
       const role = $('#role').val();
-      const limited = $('#limited').val();
+      const limited = parseInt($('#limited').val());
       const discord_channel_id = $('#discord_channel_id').val();
+      const plan = $('#plan').is(':checked');
 
       $.ajax({
         url: API_URL,
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({ username, password, role, limited, discordChannelId: discord_channel_id }),
+        data: JSON.stringify({ username, password, role, limited, discordChannelId: discord_channel_id, plan }),
         success: () => {
-          $('#modalNovo').modal('hide');
+          const modalNovo = bootstrap.Modal.getInstance(document.getElementById('modalNovo'));
+          modalNovo.hide();
           this.reset();
           $(this).removeClass('was-validated');
           carregarUsuarios();
@@ -347,6 +366,7 @@
       });
     });
 
+    // Toggle mostrar/ocultar senha novo usuário
     $('#toggleNovaSenha').click(function () {
       const input = $('#senha');
       const isPassword = input.attr('type') === 'password';
@@ -354,6 +374,7 @@
       $(this).toggleClass('bi-eye bi-eye-slash');
     });
 
+    // Filtro de busca
     $('#filtro').on('input', function () {
       const termo = $(this).val().toLowerCase();
       $('#lista-usuarios tr').each(function () {
@@ -362,9 +383,59 @@
       });
     });
 
+    // Botão salvar alteração do plano no modal de visualização
+    $('#btnSalvarPlan').click(function () {
+      if (usuarioVisualizadoId === null) return;
+      const novoPlan = $('#viewPlan').is(':checked');
+
+      $.ajax({
+        url: `${API_URL}/${usuarioVisualizadoId}/toggle-plan`,
+        type: 'PATCH',
+        contentType: 'application/json',
+        data: JSON.stringify({ plan: novoPlan }),
+        success: () => {
+          alert('Plano atualizado com sucesso!');
+          const modalVisualizar = bootstrap.Modal.getInstance(document.getElementById('modalVisualizar'));
+          modalVisualizar.hide();
+          carregarUsuarios();
+        },
+        error: (xhr) => alert('Erro ao atualizar plano: ' + xhr.responseText),
+      });
+    });
+
+    // Exportar tabela para CSV (somente colunas da tabela)
+    $('#btnExportarCSV').click(function () {
+      const rows = [];
+      rows.push(['Nome', 'Perfil', 'Senha', 'Limite']);
+      $('#lista-usuarios tr:visible').each(function () {
+        const cols = $(this).find('td');
+        if (cols.length === 0) return; // pular linha vazia
+
+        const nome = cols.eq(0).text().trim();
+        const perfil = cols.eq(1).text().trim();
+        const senha = cols.eq(2).find('input').val() || cols.eq(2).text().trim();
+        const limite = cols.eq(3).text().trim();
+
+        rows.push([nome, perfil, senha, limite]);
+      });
+
+      let csvContent = "data:text/csv;charset=utf-8,"
+        + rows.map(e => e.map(a => `"${a.replace(/"/g, '""')}"`).join(",")).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      const date = new Date().toISOString().slice(0,10);
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `usuarios_${date}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
     $(document).ready(() => {
       carregarUsuarios();
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

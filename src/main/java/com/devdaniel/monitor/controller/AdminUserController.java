@@ -1,10 +1,8 @@
 package com.devdaniel.monitor.controller;
 
 import com.devdaniel.monitor.model.User;
-import com.devdaniel.monitor.model.UserRole;
 import com.devdaniel.monitor.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +13,6 @@ import java.util.List;
 public class AdminUserController {
 
     private final UserRepository userRepo;
-    private final PasswordEncoder encoder;
 
     @GetMapping
     public List<User> listar() {
@@ -30,8 +27,16 @@ public class AdminUserController {
         return userRepo.save(user);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("all")
     public void deletar(@PathVariable Long id) {
-        userRepo.deleteById(id);
+        userRepo.deleteAll();
+    }
+
+    @PatchMapping("/{id}/plan")
+    public User atualizarPlan(@PathVariable Long id, @RequestParam boolean plan) {
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+        user.setPlan(plan);
+        return userRepo.save(user);
     }
 }
