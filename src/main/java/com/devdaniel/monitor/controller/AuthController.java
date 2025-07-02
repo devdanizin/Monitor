@@ -23,4 +23,9 @@ public class AuthController {
         userRepository.save(user);
         return "Usuário registrado com sucesso!";
     }
+
+    @DeleteMapping
+    public void delete() {
+        userRepository.deleteAll();
+    }
 }
