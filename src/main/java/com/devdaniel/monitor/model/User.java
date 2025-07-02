@@ -3,7 +3,9 @@ package com.devdaniel.monitor.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -38,5 +40,9 @@ public class User {
     private String discordChannelId;
 
     @Column
-    private Boolean plan;
+    private Boolean plan = true;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }
