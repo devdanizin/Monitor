@@ -24,15 +24,15 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepo.findByUsername(name)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + name));
 
-        if(!PlanUtil.isActive(user)) {
-            throw new AccountPlanException("Seu plano está desativado. Faça contato com o suporte.");
-        }
+        //if(!PlanUtil.isActive(user)) {
+        //    throw new AccountPlanException("Seu plano está desativado. Faça contato com o suporte.");
+        //}
         if (user.getRole() == null) {
             throw new UsernameNotFoundException("Usuário sem papel (role) definido: " + name);
         }
-        if(userValidator.isUserExpired(user)) {
-            throw new AccountPlanException("Plano expirado. Faça a renovação com o suporte.");
-        }
+        //if(userValidator.isUserExpired(user)) {
+        //    throw new AccountPlanException("Plano expirado. Faça a renovação com o suporte.");
+        //}
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
