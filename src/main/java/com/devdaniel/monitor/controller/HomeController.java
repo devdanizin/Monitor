@@ -8,7 +8,7 @@ public class HomeController {
 
     @GetMapping({"/", "/dashboard", "/monitoramentos", "/urls", "/config"})
     public String home() {
-        return "index.html";
+        return "redirect:/index.html";
     }
 
 }
