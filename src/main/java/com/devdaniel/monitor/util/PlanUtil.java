@@ -15,9 +15,9 @@ public class PlanUtil {
         PlanUtil.userRepository = repo;
     }
 
-    //public static boolean isActive(User user) {
-    //    return userRepository.findByUsername(user.getUsername())
-    //            .map(u -> Boolean.TRUE.equals(u.getPlan()))
-    //            .orElse(false);
-    //}
+    public static boolean isActive(User user) {
+        return userRepository.findByUsername(user.getUsername())
+                .map(u -> Boolean.TRUE.equals(u.getPlan()))
+                .orElse(false);
+    }
 }

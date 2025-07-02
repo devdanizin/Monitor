@@ -39,10 +39,10 @@ public class User {
     @Column(name = "discord_channel_id")
     private String discordChannelId;
 
-    //@Column
-    //private Boolean plan = true;
+    @Column
+    private Boolean plan = true;
 
-    //@CreationTimestamp
-    //@Column(name = "created_at", nullable = false, updatable = false)
-    //private LocalDateTime createdAt;
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }
