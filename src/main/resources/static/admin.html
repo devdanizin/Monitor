@@ -11,7 +11,6 @@
           background: #f8f9fa;
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         h2 {
           color: #2c3e50;
           font-weight: 700;
@@ -19,16 +18,13 @@
           user-select: none;
           animation: fadeInDown 0.7s ease forwards;
         }
-
         .container {
           max-width: 960px;
           animation: fadeIn 0.8s ease forwards;
         }
-
         .senha-box {
           position: relative;
         }
-
         .toggle-senha {
           position: absolute;
           top: 50%;
@@ -43,8 +39,6 @@
         .toggle-senha:hover {
           color: #0d6efd;
         }
-
-        /* Botão Novo Usuário com leve hover */
         .btn-success {
           transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -52,8 +46,6 @@
           transform: scale(1.05);
           box-shadow: 0 0 8px rgba(25, 135, 84, 0.6);
         }
-
-        /* Tabela animada */
         table.table-hover tbody tr {
           opacity: 0;
           transform: translateY(10px);
@@ -65,15 +57,11 @@
         table.table-hover tbody tr:nth-child(odd) {
           animation-delay: 0.4s;
         }
-
-        /* Modal com fade e zoom */
         .modal-content {
           border-radius: 1rem;
           box-shadow: 0 0 20px rgba(0,0,0,0.1);
           animation: zoomIn 0.35s ease forwards;
         }
-
-        /* Animações Keyframes */
         @keyframes fadeInDown {
           from {opacity: 0; transform: translateY(-15px);}
           to {opacity: 1; transform: translateY(0);}
@@ -195,9 +183,66 @@
     </div>
 </div>
 
+<!-- Modal Visualizar Usuário -->
+<div class="modal fade" id="modalVisualizar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-4">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fw-bold text-primary">👁️ Visualizar Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body px-5 pt-0 pb-4">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Nome:</dt>
+                    <dd class="col-sm-8" id="viewUsername"></dd>
+
+                    <dt class="col-sm-4">Perfil:</dt>
+                    <dd class="col-sm-8" id="viewRole"></dd>
+
+                    <dt class="col-sm-4">Senha:</dt>
+                    <dd class="col-sm-8 senha-box">
+                        <input type="password" readonly class="form-control form-control-sm" id="viewPassword" style="max-width:160px; display:inline-block;" />
+                        <i class="bi bi-eye toggle-senha" id="toggleViewSenha" style="cursor:pointer; font-size:1.2rem; vertical-align:middle; margin-left:6px;" aria-label="Mostrar/ocultar senha"></i>
+                    </dd>
+
+                    <dt class="col-sm-4">Limite:</dt>
+                    <dd class="col-sm-8" id="viewLimited"></dd>
+
+                    <dt class="col-sm-4">Discord Channel ID:</dt>
+                    <dd class="col-sm-8" id="viewDiscord"></dd>
+                </dl>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmar Exclusão -->
+<div class="modal fade" id="modalConfirmarExclusao" tabindex="-1" aria-hidden="true" aria-labelledby="modalConfirmarExclusaoLabel">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-4">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fw-bold text-danger" id="modalConfirmarExclusaoLabel">⚠️ Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body px-5 pt-0 pb-4" id="textoConfirmacao">
+                <!-- Texto dinâmico aqui -->
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarExcluir">Excluir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     const API_URL = '/api/admin/usuarios';
     const usuarioLogado = 'admin';
+
+    let usuarioParaExcluirId = null; // guarda id para exclusão após confirmação
 
     function carregarUsuarios() {
       $.get(API_URL, function (data) {
@@ -209,21 +254,26 @@
 
         data.forEach((u, i) => {
           const podeExcluir = u.username !== usuarioLogado && u.role !== 'ADMIN';
+
           const linha = $(`
             <tr style="animation-delay: ${i * 0.1}s;">
               <td>${u.username}</td>
               <td><span class="badge ${u.role === 'ADMIN' ? 'bg-danger' : 'bg-secondary'}">${u.role}</span></td>
               <td class="senha-box">
-                <input type="password" readonly class="form-control form-control-sm" value="${u.password}" style="max-width:160px;" />
-                <i class="bi bi-eye toggle-senha"></i>
+                <input type="password" readonly class="form-control form-control-sm" value="${u.password}" style="max-width:160px; display:inline-block;" />
+                <i class="bi bi-eye toggle-senha" style="cursor:pointer; font-size:1.1rem; vertical-align:middle; margin-left:6px;"></i>
               </td>
               <td>${u.limited ?? '-'}</td>
               <td>
-                ${podeExcluir ? `<button class="btn btn-sm btn-outline-danger btn-delete" data-id="${u.id}" title="Excluir usuário"><i class="bi bi-trash"></i></button>` : ''}
+                <button class="btn btn-sm btn-info btn-view me-1" title="Visualizar usuário" aria-label="Visualizar usuário ${u.username}" data-id="${u.id}" data-username="${u.username}" data-role="${u.role}" data-password="${u.password}" data-limited="${u.limited ?? '-'}" data-discord="${u.discord_channel_id ?? '-'}">
+                  <i class="bi bi-eye"></i>
+                </button>
+                ${podeExcluir ? `<button class="btn btn-sm btn-outline-danger btn-delete" title="Excluir usuário" aria-label="Excluir usuário ${u.username}" data-id="${u.id}" data-username="${u.username}"><i class="bi bi-trash"></i></button>` : ''}
               </td>
             </tr>
           `);
 
+          // Toggle senha no input da lista
           linha.find('.toggle-senha').click(function () {
             const input = $(this).siblings('input');
             const isPassword = input.attr('type') === 'password';
@@ -231,22 +281,49 @@
             $(this).toggleClass('bi-eye bi-eye-slash');
           });
 
+          // Abrir modal visualizar
+          linha.find('.btn-view').click(function () {
+            const btn = $(this);
+            $('#viewUsername').text(btn.data('username'));
+            $('#viewRole').text(btn.data('role'));
+            $('#viewPassword').val(btn.data('password')).attr('type', 'password');
+            $('#toggleViewSenha').removeClass('bi-eye-slash').addClass('bi-eye');
+            $('#viewLimited').text(btn.data('limited'));
+            $('#viewDiscord').text(btn.data('discord'));
+            const modalVisualizar = new bootstrap.Modal(document.getElementById('modalVisualizar'));
+            modalVisualizar.show();
+          });
+
+          // Abrir modal confirmação exclusão
           linha.find('.btn-delete').click(function () {
-            const id = $(this).data('id');
-            if (confirm('Tem certeza que deseja excluir?')) {
-              $.ajax({
-                url: API_URL + '/' + id,
-                type: 'DELETE',
-                success: carregarUsuarios,
-                error: (xhr) => alert('Erro ao excluir: ' + xhr.responseText),
-              });
-            }
+            usuarioParaExcluirId = $(this).data('id');
+            const nomeUsuario = $(this).data('username');
+            $('#textoConfirmacao').text(`Tem certeza que deseja excluir o usuário "${nomeUsuario}"? Essa ação não pode ser desfeita.`);
+            const modalConfirm = new bootstrap.Modal(document.getElementById('modalConfirmarExclusao'));
+            modalConfirm.show();
           });
 
           lista.append(linha);
         });
       });
     }
+
+    // Confirmar exclusão ao clicar no botão do modal
+    $('#btnConfirmarExcluir').click(function () {
+      if (!usuarioParaExcluirId) return;
+      $.ajax({
+        url: API_URL + '/' + usuarioParaExcluirId,
+        type: 'DELETE',
+        success: () => {
+          usuarioParaExcluirId = null;
+          carregarUsuarios();
+          const modalConfirmEl = document.getElementById('modalConfirmarExclusao');
+          const modalConfirm = bootstrap.Modal.getInstance(modalConfirmEl);
+          modalConfirm.hide();
+        },
+        error: (xhr) => alert('Erro ao excluir: ' + xhr.responseText),
+      });
+    });
 
     $('#form-novo-usuario').submit(function (e) {
       e.preventDefault();
@@ -267,7 +344,9 @@
         contentType: 'application/json',
         data: JSON.stringify({ username, password, role, limited, discord_channel_id }),
         success: () => {
-          $('#modalNovo').modal('hide');
+          const modalNovoEl = document.getElementById('modalNovo');
+          const modalNovo = bootstrap.Modal.getInstance(modalNovoEl);
+          modalNovo.hide();
           this.reset();
           $(this).removeClass('was-validated');
           carregarUsuarios();
@@ -278,6 +357,14 @@
 
     $('#toggleNovaSenha').click(function () {
       const input = $('#senha');
+      const isPassword = input.attr('type') === 'password';
+      input.attr('type', isPassword ? 'text' : 'password');
+      $(this).toggleClass('bi-eye bi-eye-slash');
+    });
+
+    // Toggle senha no modal visualizar
+    $('#toggleViewSenha').click(function () {
+      const input = $('#viewPassword');
       const isPassword = input.attr('type') === 'password';
       input.attr('type', isPassword ? 'text' : 'password');
       $(this).toggleClass('bi-eye bi-eye-slash');
