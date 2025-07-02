@@ -36,4 +36,7 @@ public class User {
 
     @Column(name = "discord_channel_id")
     private String discordChannelId;
+
+    @Column
+    private Boolean plan;
 }

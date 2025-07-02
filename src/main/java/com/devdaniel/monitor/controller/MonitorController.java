@@ -24,4 +24,9 @@ public class MonitorController {
         return repository.findBySiteUser(user);
     }
 
+    @DeleteMapping("/all")
+    public void deleteAllMonitors() {
+        repository.deleteAll();
+    }
+
 }

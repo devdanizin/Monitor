@@ -66,4 +66,9 @@ public class SiteController {
 
         repository.delete(site);
     }
+
+    @DeleteMapping("/delete")
+    public void deleteAll() {
+        repository.deleteAll();
+    }
 }
