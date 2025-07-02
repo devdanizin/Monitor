@@ -85,6 +85,12 @@
     </style>
 </head>
 <body>
+
+<!-- Toast Container -->
+<div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+    <div id="toast-container"></div>
+</div>
+
 <div class="container mt-5">
     <h2 class="mb-4">👨‍💼 Painel de Admin - Gerenciar Usuários</h2>
 
@@ -254,6 +260,26 @@
     let usuarioParaExcluirId = null;
     let usuarioVisualizadoId = null;
 
+    function showToast(message, type = 'success', delay = 3000) {
+      const toastId = 'toast-' + Date.now();
+      const toastHtml = `
+        <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="${delay}">
+          <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+          </div>
+        </div>
+      `;
+      $('#toast-container').append(toastHtml);
+      const toastElement = document.getElementById(toastId);
+      const bsToast = new bootstrap.Toast(toastElement);
+      bsToast.show();
+
+      toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+      });
+    }
+
     function carregarUsuarios() {
       $.get(API_URL, function (data) {
         const lista = $('#lista-usuarios').empty();
@@ -328,9 +354,10 @@
           const modalConfirmDelete = bootstrap.Modal.getInstance(document.getElementById('modalConfirmDelete'));
           modalConfirmDelete.hide();
           carregarUsuarios();
+          showToast('Usuário excluído com sucesso!', 'success');
         },
         error: (xhr) => {
-          alert('Erro ao excluir: ' + xhr.responseText);
+          showToast('Erro ao excluir: ' + xhr.responseText, 'danger');
         }
       });
     });
@@ -361,8 +388,9 @@
           this.reset();
           $(this).removeClass('was-validated');
           carregarUsuarios();
+          showToast('Usuário criado com sucesso!', 'success');
         },
-        error: (xhr) => alert('Erro ao criar: ' + xhr.responseText),
+        error: (xhr) => showToast('Erro ao criar: ' + xhr.responseText, 'danger'),
       });
     });
 
@@ -389,53 +417,49 @@
       const novoPlan = $('#viewPlan').is(':checked');
 
       $.ajax({
-        url: `${API_URL}/${usuarioVisualizadoId}/toggle-plan`,
+        url: `${API_URL}/${usuarioVisualizadoId}/plan`,
         type: 'PATCH',
         contentType: 'application/json',
         data: JSON.stringify({ plan: novoPlan }),
         success: () => {
-          alert('Plano atualizado com sucesso!');
+          showToast('Plano atualizado com sucesso!', 'success');
           const modalVisualizar = bootstrap.Modal.getInstance(document.getElementById('modalVisualizar'));
           modalVisualizar.hide();
           carregarUsuarios();
         },
-        error: (xhr) => alert('Erro ao atualizar plano: ' + xhr.responseText),
+        error: (xhr) => showToast('Erro ao atualizar plano: ' + xhr.responseText, 'danger'),
       });
     });
 
-    // Exportar tabela para CSV (somente colunas da tabela)
+    // Botão exportar CSV
     $('#btnExportarCSV').click(function () {
-      const rows = [];
-      rows.push(['Nome', 'Perfil', 'Senha', 'Limite']);
-      $('#lista-usuarios tr:visible').each(function () {
-        const cols = $(this).find('td');
-        if (cols.length === 0) return; // pular linha vazia
+      $.get(API_URL, function (data) {
+        if (!data.length) {
+          showToast('Nenhum usuário para exportar.', 'warning');
+          return;
+        }
+        let csv = 'Nome,Perfil,Senha,Limite,Discord Channel ID,Plano Ativo\n';
+        data.forEach(u => {
+          csv += `"${u.username}","${u.role}","${u.password}","${u.limited ?? ''}","${u.discordChannelId ?? ''}","${u.plan ? 'Sim' : 'Não'}"\n`;
+        });
 
-        const nome = cols.eq(0).text().trim();
-        const perfil = cols.eq(1).text().trim();
-        const senha = cols.eq(2).find('input').val() || cols.eq(2).text().trim();
-        const limite = cols.eq(3).text().trim();
-
-        rows.push([nome, perfil, senha, limite]);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'usuarios.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('CSV exportado com sucesso!', 'success');
       });
-
-      let csvContent = "data:text/csv;charset=utf-8,"
-        + rows.map(e => e.map(a => `"${a.replace(/"/g, '""')}"`).join(",")).join("\n");
-
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      const date = new Date().toISOString().slice(0,10);
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `usuarios_${date}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
     });
 
+    // Inicialização
     $(document).ready(() => {
       carregarUsuarios();
     });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -45,4 +45,7 @@ public class User {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "plan_expiry")
+    private LocalDateTime planExpiry;
 }
