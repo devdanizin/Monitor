@@ -1,5 +1,6 @@
 package com.devdaniel.monitor.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,5 +31,6 @@ public class MonitorTask {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "site_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private MonitoredSite site;
 }
