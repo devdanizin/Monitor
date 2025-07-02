@@ -2,6 +2,7 @@ package com.devdaniel.monitor.service;
 
 import com.devdaniel.monitor.model.MonitorTask;
 import com.devdaniel.monitor.model.MonitoredSite;
+import com.devdaniel.monitor.model.User;
 import com.devdaniel.monitor.repository.MonitorRepository;
 import com.devdaniel.monitor.repository.MonitoredRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,11 @@ public class MonitorService {
         for (MonitoredSite site : sites) {
             String url = site.getUrl();
             MonitorTask resultado = verificarUrl(url);
+            resultado.setSite(site);
             monitorRepository.save(resultado);
+            User dono1 = site.getUser();
+            String mensagem1 = "🔴 Atenção: o site " + url + " está com problemas há 5 tentativas consecutivas.";
+            alertService.sendAlertToUser(dono1, mensagem1);
 
             boolean falhou = (resultado.getStatusCode() == 0 || resultado.getResponseTime() > 3000);
 
@@ -39,7 +44,9 @@ public class MonitorService {
                 site.setFalhasConsecutivas(site.getFalhasConsecutivas() + 1);
 
                 if (site.getFalhasConsecutivas() >= 5) {
-                    alertService.sendEmail("🔴 Atenção: o site está com problemas há 5 tentativas consecutivas. URL: " + url);
+                    User dono = site.getUser();
+                    String mensagem = "🔴 Atenção: o site " + url + " está com problemas há 5 tentativas consecutivas.";
+                    alertService.sendAlertToUser(dono, mensagem);
                     site.setFalhasConsecutivas(0);
                 }
             } else {
