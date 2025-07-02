@@ -40,6 +40,7 @@ public class User {
     private String discordChannelId;
 
     @Column
+    @Builder.Default
     private Boolean plan = true;
 
     @CreationTimestamp
