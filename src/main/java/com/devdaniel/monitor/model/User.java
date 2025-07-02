@@ -34,6 +34,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(nullable = false, name = "discord_channel_id")
+    @Column(name = "discord_channel_id")
     private String discordChannelId;
 }
