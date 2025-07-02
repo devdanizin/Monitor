@@ -11,7 +11,8 @@ public class MonitorScheduler {
 
     private final MonitorService monitorService;
 
-    @Scheduled(fixedRate = 600000)
+    //@Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 60000)
     public void verificarUrls() {
         monitorService.checkAllRegisteredUrls();
     }

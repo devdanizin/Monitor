@@ -13,6 +13,8 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 public class MonitorService {
 
@@ -25,6 +27,7 @@ public class MonitorService {
     @Autowired
     private AlertService alertService;
 
+    @Transactional
     public void checkAllRegisteredUrls() {
         List<MonitoredSite> sites = siteRepository.findAll();
         System.out.println("⏱ Verificando " + sites.size() + " sites...");
@@ -34,7 +37,8 @@ public class MonitorService {
             MonitorTask resultado = verificarUrl(url);
             resultado.setSite(site);
             monitorRepository.save(resultado);
-            User dono1 = site.getUser();
+
+            User dono1 = site.getUser();  // <-- Aqui, User será inicializado pois a sessão está aberta
             String mensagem1 = "🔴 Atenção: o site " + url + " está com problemas há 5 tentativas consecutivas.";
             alertService.sendAlertToUser(dono1, mensagem1);
 
