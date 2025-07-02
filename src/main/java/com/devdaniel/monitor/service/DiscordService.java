@@ -1,0 +1,50 @@
+package com.devdaniel.monitor.service;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import lombok.Getter;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+public class DiscordService {
+
+    @Value("${discord.bot.token}")
+    private String botToken;
+
+    @Getter
+    private JDA jda;
+
+    @PostConstruct
+    public void init() throws Exception {
+        jda = JDABuilder.createDefault(botToken, GatewayIntent.GUILD_MESSAGES)
+                .build()
+                .awaitReady();
+        System.out.println("Discord Bot conectado!");
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        if (jda != null) {
+            jda.shutdown();
+        }
+    }
+
+    public void sendMessageToChannel(String channelId, String message) {
+        try {
+            TextChannel channel = jda.getTextChannelById(channelId);
+            if (channel != null) {
+                channel.sendMessage(message).queue();
+            } else {
+                System.err.println("Canal Discord não encontrado: " + channelId);
+            }
+        } catch (ErrorResponseException e) {
+            System.err.println("Erro ao enviar mensagem Discord: " + e.getMessage());
+        }
+    }
+}
