@@ -8,7 +8,7 @@ public class AdminController {
 
     @GetMapping({"/admin", "/dashboard", "/administrar"})
     public String admin() {
-        return "redirect:/admin.html";
+        return "admin";
     }
 
 }
