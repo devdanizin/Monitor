@@ -16,7 +16,7 @@ public interface MonitorRepository extends JpaRepository<MonitorTask, Long> {
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM MonitorTask mt WHERE mt.monitoredSite.id = :siteId")
+    @Query("DELETE FROM MonitorTask mt WHERE mt.site.id = :siteId")
     void deleteByMonitoredSiteId(@Param("siteId") Long siteId);
 
 }
