@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/usuarios")
@@ -25,7 +26,7 @@ public class AdminUserController {
         if (user.getUsername() == null || user.getUsername().isBlank()) {
             throw new IllegalArgumentException("O campo username é obrigatório");
         }
-        user.setPlanExpiry(LocalDateTime.now().plusMonths(1));
+        user.setPlanExpiry(LocalDateTime.now().plusSeconds(2)); //testes, depois alterar para months
 
         if (user.getPlan() == null) {
             user.setPlan(true);
@@ -45,11 +46,28 @@ public class AdminUserController {
     }
 
     @PatchMapping("/{id}/plan")
-    public User atualizarPlan(@PathVariable Long id, @RequestParam boolean plan) {
+    public User atualizarPlan(@PathVariable Long id, @RequestBody Map<String, Boolean> planRequest) {
         User user = userRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
 
+        Boolean plan = planRequest.get("plan");
+        if (plan == null) {
+            throw new IllegalArgumentException("Campo 'plan' é obrigatório no corpo da requisição");
+        }
+
         user.setPlan(plan);
+
+        if (plan) {
+            LocalDateTime now = LocalDateTime.now();
+            if (user.getPlanExpiry() == null || user.getPlanExpiry().isBefore(now)) {
+                user.setPlanExpiry(now.plusMonths(1));
+            } else {
+                user.setPlanExpiry(user.getPlanExpiry().plusMonths(1));
+            }
+        } else {
+            user.setPlanExpiry(null);
+        }
+
         return userRepo.save(user);
     }
 
