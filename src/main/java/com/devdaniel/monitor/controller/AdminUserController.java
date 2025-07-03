@@ -26,7 +26,7 @@ public class AdminUserController {
         if (user.getUsername() == null || user.getUsername().isBlank()) {
             throw new IllegalArgumentException("O campo username é obrigatório");
         }
-        user.setPlanExpiry(LocalDateTime.now().plusSeconds(2)); //testes, depois alterar para months
+        user.setPlanExpiry(LocalDateTime.now().plusSeconds(2));
 
         if (user.getPlan() == null) {
             user.setPlan(true);
