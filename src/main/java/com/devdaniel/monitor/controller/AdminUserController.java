@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +17,10 @@ import java.util.Map;
 public class AdminUserController {
 
     private final UserRepository userRepo;
+
+    private LocalDateTime nowBrasilia() {
+        return ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toLocalDateTime();
+    }
 
     @GetMapping
     public List<User> listar() {
@@ -26,7 +32,7 @@ public class AdminUserController {
         if (user.getUsername() == null || user.getUsername().isBlank()) {
             throw new IllegalArgumentException("O campo username é obrigatório");
         }
-        user.setPlanExpiry(LocalDateTime.now().plusSeconds(2));
+        user.setPlanExpiry(nowBrasilia().plusSeconds(2));
 
         if (user.getPlan() == null) {
             user.setPlan(true);
@@ -58,7 +64,7 @@ public class AdminUserController {
         user.setPlan(plan);
 
         if (plan) {
-            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime now = nowBrasilia();
             if (user.getPlanExpiry() == null || user.getPlanExpiry().isBefore(now)) {
                 user.setPlanExpiry(now.plusMonths(1));
             } else {
@@ -77,7 +83,7 @@ public class AdminUserController {
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
 
         if (user.getPlanExpiry() == null) {
-            user.setPlanExpiry(LocalDateTime.now().plusMonths(1));
+            user.setPlanExpiry(nowBrasilia().plusMonths(1));
         } else {
             user.setPlanExpiry(user.getPlanExpiry().plusMonths(1));
         }
