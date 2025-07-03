@@ -5,9 +5,11 @@ import com.devdaniel.monitor.dto.response.MonitoredSiteResponse;
 import com.devdaniel.monitor.mapper.MonitoredSiteMapper;
 import com.devdaniel.monitor.model.MonitoredSite;
 import com.devdaniel.monitor.model.User;
+import com.devdaniel.monitor.repository.MonitorRepository;
 import com.devdaniel.monitor.repository.MonitoredRepository;
 import com.devdaniel.monitor.repository.UserRepository;
 import com.devdaniel.monitor.util.AuthUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class SiteController {
 
     private final UserRepository userRepository;
+    private final MonitorRepository monitorRepository;
     private final MonitoredRepository repository;
     private final MonitoredSiteMapper mapper;
 
@@ -52,6 +55,7 @@ public class SiteController {
         return mapper.toResponse(saved);
     }
 
+    @Transactional
     @DeleteMapping("/{id}")
     public void deleteSite(@PathVariable Long id) {
         User user = userRepository.findByUsername(AuthUtil.getLoggedUsername())
@@ -63,6 +67,8 @@ public class SiteController {
         if (!site.getUser().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não pode deletar essa URL");
         }
+
+        monitorRepository.deleteByMonitoredSiteId(id);
 
         repository.delete(site);
     }
