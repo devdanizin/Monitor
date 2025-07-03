@@ -76,7 +76,6 @@
             outline: 2px solid #3a79f7;
             outline-offset: 2px;
         }
-        /* Switch de tema com sol e lua */
 
         .theme-toggle {
             display: flex;
@@ -138,12 +137,10 @@
         body.dark-mode #icon-moon {
             display: block;
         }
-        /* Por padrão lua escondida */
 
         #icon-moon {
             display: none;
         }
-        /* Conteúdo principal */
 
         .main-content {
             flex: 1;
@@ -156,7 +153,6 @@
             flex-direction: column;
             gap: 1.5rem;
         }
-        /* Tabs topo */
 
         .tab-list {
             display: flex;
@@ -190,7 +186,6 @@
             outline: 3px solid #3a79f7aa;
             border-radius: 4px;
         }
-        /* Painel das tabs */
 
         .tab-panel {
             flex-grow: 1;
@@ -217,7 +212,6 @@
             background-color: #a0b4e8;
             border-radius: 8px;
         }
-        /* Títulos */
 
         h2 {
             font-weight: 700;
@@ -225,7 +219,6 @@
             margin-bottom: 1.25rem;
             letter-spacing: 0.03em;
         }
-        /* Inputs e selects */
 
         input[type=date],
         select,
@@ -270,7 +263,6 @@
             box-shadow: 0 6px 10px #295fcbcc;
             outline: none;
         }
-        /* Botões pequenos vermelhos */
 
         button.btn-sm {
             background: #e74c3c;
@@ -291,7 +283,6 @@
             box-shadow: 0 4px 8px #bf3a2bcc;
             outline: none;
         }
-        /* Formulario URL */
 
         #url-form {
             display: flex;
@@ -305,7 +296,6 @@
             flex-grow: 1;
             min-width: 280px;
         }
-        /* Lista URLs */
 
         #lista-urls {
             max-height: 60vh;
@@ -340,7 +330,6 @@
             background-color: #e4ecff;
             outline: none;
         }
-        /* Cartões monitor */
 
         .monitor-card {
             background: #ffffff;
@@ -431,6 +420,47 @@
         body.dark-mode {
             background: #121212;
             color: #e0e0e0;
+        }
+
+        body.dark-mode h2 {
+            color: #a0b4e8;
+        }
+
+        body.dark-mode p,
+        body.dark-mode span,
+        body.dark-mode a,
+        body.dark-mode li {
+            color: #cbd6ea;
+        }
+
+        body.dark-mode a {
+            color: #6495ed;
+        }
+
+        body.dark-mode a:hover,
+        body.dark-mode a:focus {
+            text-decoration: underline;
+        }
+
+        .dark-mode #lista-urls {
+            border: 1px solid #3e4249;
+            background: #2c2f36;
+            box-shadow: inset 0 2px 6px #1a1c22;
+        }
+
+        .dark-mode #lista-urls li {
+            border-bottom: 1px solid #3e4249;
+            color: #cbd6ea;
+        }
+
+        .dark-mode #lista-urls li:last-child {
+            border-bottom: none;
+        }
+
+        .dark-mode #lista-urls li:hover,
+        .dark-mode #lista-urls li:focus-within {
+            background-color: #3a3e47;
+            outline: none;
         }
 
         .dark-mode .main-content {
