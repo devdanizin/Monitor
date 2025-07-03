@@ -706,7 +706,7 @@
 
     function carregarMonitoramentos() {
       $.ajax({
-        url: "/api/sites",
+        url: "/api/monitor/todos",
         type: "GET",
         success: function (monitorData) {
           const container = $("#monitor-container").empty();
@@ -736,7 +736,7 @@
 
     function carregarUrls() {
       $.ajax({
-        url: "/api/monitor",
+        url: "/api/sites",
         type: "GET",
         success: function (urls) {
           const ul = $("#lista-urls").empty();
