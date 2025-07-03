@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8" />
     <title>Painel de Admin - Usuários</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet" />
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+            rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <style>
         /* Geral */
@@ -180,12 +184,18 @@
     <h2>👨‍💼 Painel de Admin - Gerenciar Usuários</h2>
 
     <div class="d-flex justify-content-between flex-wrap gap-2 mb-3">
-        <input type="text" id="filtro" class="form-control w-50" placeholder="🔍 Buscar usuário..." aria-label="Buscar usuário" />
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNovo" aria-label="Adicionar novo usuário">+ Novo Usuário</button>
-        <button id="btnExportarCSV" class="btn btn-outline-primary" aria-label="Exportar lista de usuários para CSV">📥 Exportar CSV</button>
+        <input type="text" id="filtro" class="form-control w-50"
+               placeholder="🔍 Buscar usuário..." aria-label="Buscar usuário" />
+        <button class="btn btn-success" data-bs-toggle="modal"
+                data-bs-target="#modalNovo" aria-label="Adicionar novo usuário">+ Novo
+            Usuário</button>
+        <button id="btnExportarCSV" class="btn btn-outline-primary"
+                aria-label="Exportar lista de usuários para CSV">📥 Exportar
+            CSV</button>
     </div>
 
-    <table class="table table-hover align-middle" aria-label="Lista de usuários">
+    <table class="table table-hover align-middle"
+           aria-label="Lista de usuários">
         <thead>
         <tr>
             <th>Nome</th>
@@ -195,17 +205,21 @@
             <th>Ações</th>
         </tr>
         </thead>
-        <tbody id="lista-usuarios" aria-live="polite" aria-relevant="additions"></tbody>
+        <tbody id="lista-usuarios" aria-live="polite"
+               aria-relevant="additions"></tbody>
     </table>
 </div>
 
 <!-- Modal Adicionar Usuário -->
-<div class="modal fade" id="modalNovo" tabindex="-1" aria-hidden="true" aria-labelledby="modalNovoLabel" role="dialog">
+<div class="modal fade" id="modalNovo" tabindex="-1" aria-hidden="true"
+     aria-labelledby="modalNovoLabel" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow-lg rounded-4">
             <div class="modal-header">
-                <h5 class="modal-title text-primary fw-bold" id="modalNovoLabel">➕ Adicionar Novo Usuário</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                <h5 class="modal-title text-primary fw-bold" id="modalNovoLabel">➕
+                    Adicionar Novo Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
             </div>
             <div class="modal-body px-4 pt-0 pb-4">
                 <form id="form-novo-usuario" class="needs-validation" novalidate>
@@ -217,8 +231,7 @@
                                 class="form-control form-control-lg"
                                 placeholder="Digite o nome"
                                 required
-                                aria-describedby="usernameHelp"
-                        />
+                                aria-describedby="usernameHelp" />
                         <div class="invalid-feedback">Por favor, insira o nome.</div>
                     </div>
 
@@ -230,28 +243,27 @@
                                 class="form-control form-control-lg"
                                 placeholder="Digite a senha"
                                 required
-                                aria-describedby="senhaHelp"
-                        />
+                                aria-describedby="senhaHelp" />
                         <i
                                 class="bi bi-eye toggle-senha"
                                 id="toggleNovaSenha"
                                 aria-label="Mostrar/ocultar senha"
                                 role="button"
-                                tabindex="0"
-                        ></i>
+                                tabindex="0"></i>
                         <div class="invalid-feedback">Por favor, insira a senha.</div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="discord_channel_id" class="form-label">Discord Channel ID</label>
+                        <label for="discord_channel_id" class="form-label">Discord
+                            Channel ID</label>
                         <input
                                 type="text"
                                 id="discord_channel_id"
                                 class="form-control form-control-lg"
                                 placeholder="ID do canal Discord"
-                                required
-                        />
-                        <div class="invalid-feedback">Por favor, insira o Discord Channel ID.</div>
+                                required />
+                        <div class="invalid-feedback">Por favor, insira o Discord
+                            Channel ID.</div>
                     </div>
 
                     <div class="mb-3">
@@ -262,38 +274,45 @@
                                 class="form-control form-control-lg"
                                 placeholder="Digite o limite"
                                 required
-                                min="0"
-                        />
-                        <div class="invalid-feedback">Por favor, insira um limite válido.</div>
+                                min="0" />
+                        <div class="invalid-feedback">Por favor, insira um limite
+                            válido.</div>
                     </div>
 
                     <div class="mb-4">
                         <label for="role" class="form-label">Perfil</label>
-                        <select id="role" class="form-select form-select-lg" aria-label="Selecionar perfil">
+                        <select id="role" class="form-select form-select-lg"
+                                aria-label="Selecionar perfil">
                             <option value="USER" selected>Usuário</option>
                             <option value="ADMIN">Administrador</option>
                         </select>
                     </div>
 
                     <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="plan" checked />
-                        <label class="form-check-label fw-semibold" for="plan">Plano Ativo</label>
+                        <input class="form-check-input" type="checkbox" id="plan"
+                               checked />
+                        <label class="form-check-label fw-semibold" for="plan">Plano
+                            Ativo</label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-semibold shadow-sm">Salvar</button>
+                    <button type="submit"
+                            class="btn btn-primary btn-lg w-100 fw-semibold shadow-sm">Salvar</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Visualizar Usuário -->
-<div class="modal fade" id="modalVisualizar" tabindex="-1" aria-hidden="true" aria-labelledby="modalVisualizarLabel" role="dialog">
+<div class="modal fade" id="modalVisualizar" tabindex="-1"
+     aria-hidden="true" aria-labelledby="modalVisualizarLabel" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow-lg rounded-4">
-            <div class="modal-header d-flex justify-content-between align-items-center border-0">
-                <h5 class="modal-title fw-bold text-primary" id="modalVisualizarLabel">👁️ Visualizar Usuário</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            <div
+                    class="modal-header d-flex justify-content-between align-items-center border-0">
+                <h5 class="modal-title fw-bold text-primary"
+                    id="modalVisualizarLabel">👁️ Visualizar Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
             </div>
             <div class="modal-body px-4 pt-0 pb-4">
                 <dl class="row mb-3">
@@ -308,39 +327,54 @@
 
                     <dt class="col-sm-4 fw-semibold">Discord Channel ID:</dt>
                     <dd class="col-sm-8" id="viewDiscordChannelId"></dd>
+
+                    <dt class="col-sm-4 fw-semibold">Plano Expira em:</dt>
+                    <dd class="col-sm-8" id="viewPlanExpiry"></dd>
                 </dl>
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="viewPlan" />
-                    <label class="form-check-label fw-semibold" for="viewPlan">Plano Ativo</label>
+                    <label class="form-check-label fw-semibold" for="viewPlan">Plano
+                        Ativo</label>
                 </div>
             </div>
             <div class="modal-footer border-0">
-                <button id="btnSalvarPlan" type="button" class="btn btn-primary">Salvar Alteração do Plano</button>
+                <button id="btnSalvarPlan" type="button"
+                        class="btn btn-primary me-2">Salvar Alteração do Plano</button>
+                <button id="btnRenovarPlano" type="button"
+                        class="btn btn-outline-primary">Renovar Plano</button>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Modal Confirmar Exclusão -->
-<div class="modal fade" id="modalConfirmDelete" tabindex="-1" aria-hidden="true" aria-labelledby="modalConfirmDeleteLabel" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog">
+<div class="modal fade" id="modalConfirmDelete" tabindex="-1"
+     aria-hidden="true" aria-labelledby="modalConfirmDeleteLabel"
+     data-bs-backdrop="static" data-bs-keyboard="false" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow-lg rounded-4">
             <div class="modal-header border-0">
-                <h5 class="modal-title text-danger fw-bold" id="modalConfirmDeleteLabel">⚠️ Confirmar Exclusão</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                <h5 class="modal-title text-danger fw-bold"
+                    id="modalConfirmDeleteLabel">⚠️ Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
             </div>
             <div class="modal-body px-4 pt-0 pb-4">
-                <p id="confirmDeleteMessage" class="mb-0">Tem certeza que deseja excluir este usuário?</p>
+                <p id="confirmDeleteMessage" class="mb-0">Tem certeza que deseja
+                    excluir este usuário?</p>
             </div>
             <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="btnConfirmDelete">Excluir</button>
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger"
+                        id="btnConfirmDelete">Excluir</button>
             </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const API_URL = '/api/admin/usuarios';
     const usuarioLogado = 'admin';
@@ -404,15 +438,27 @@
 
           // Visualizar usuário (modal)
           linha.find('.btn-view').click(function () {
-            usuarioVisualizadoId = u.id;
-            $('#viewUsername').text(u.username);
-            $('#viewRole').text(u.role);
-            $('#viewLimited').text(u.limited ?? '-');
-            $('#viewDiscordChannelId').text(u.discordChannelId ?? '-');
-            $('#viewPlan').prop('checked', !!u.plan);
+                usuarioVisualizadoId = u.id;
+                $('#viewUsername').text(u.username);
+                $('#viewRole').text(u.role);
+                $('#viewLimited').text(u.limited ?? '-');
+                $('#viewDiscordChannelId').text(u.discordChannelId ?? '-');
+                $('#viewPlan').prop('checked', !!u.plan);
 
-            const modalVisualizar = new bootstrap.Modal(document.getElementById('modalVisualizar'));
-            modalVisualizar.show();
+                if (u.planExpiry) {
+                  const data = new Date(u.planExpiry);
+                  const agora = new Date();
+                  const expirado = data < agora;
+                  const statusText = expirado
+                    ? `<span class="text-danger fw-bold">${data.toLocaleString()} (VENCIDO)</span>`
+                    : `<span class="text-success">${data.toLocaleString()} (Ativo)</span>`;
+                  $('#viewPlanExpiry').html(statusText);
+             } else {
+                $('#viewPlanExpiry').html('<span class="text-muted">Sem plano</span>');
+              }
+
+              const modalVisualizar = new bootstrap.Modal(document.getElementById('modalVisualizar'));
+              modalVisualizar.show();
           });
 
           // Excluir usuário
@@ -448,6 +494,22 @@
           showToast('Erro ao excluir: ' + xhr.responseText, 'danger');
         }
       });
+    });
+
+    $('#btnRenovarPlano').click(function () {
+    if (usuarioVisualizadoId === null) return;
+
+    $.ajax({
+      url: `${API_URL}/${usuarioVisualizadoId}/renew`,
+      type: 'PATCH',
+      success: () => {
+        showToast('Plano renovado com sucesso!', 'success');
+        const modalVisualizar = bootstrap.Modal.getInstance(document.getElementById('modalVisualizar'));
+        modalVisualizar.hide();
+        carregarUsuarios();
+      },
+      error: (xhr) => showToast('Erro ao renovar plano: ' + xhr.responseText, 'danger'),
+        });
     });
 
     // Formulário novo usuário
