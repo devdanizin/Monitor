@@ -740,7 +740,7 @@
     // Excluir URL via API
     function excluirUrl(id) {
       $.ajax({
-        url: `/api/monitor/${id}`,
+        url: `/api/sites/${id}`,
         type: "DELETE",
         success: function () {
           showToast("URL excluída com sucesso!", "success");
@@ -757,7 +757,7 @@
     // Adicionar nova URL via API
     function adicionarUrl(url) {
       $.ajax({
-        url: "/api/monitor",
+        url: "/api/sites",
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify({ url }),
