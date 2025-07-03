@@ -621,7 +621,7 @@
     let chart = null;
     function atualizarGrafico() {
       $.ajax({
-        url: '/api/monitor-tasks',
+        url: '/api/sites',
         type: 'GET',
         success: function (monitorData) {
           const dataMin = new Date($("#data-inicial").val());
@@ -683,7 +683,7 @@
     // Carregar histórico monitoramentos (cards)
     function carregarMonitoramentos() {
       $.ajax({
-        url: "/api/monitor-tasks",
+        url: "/api/sites",
         type: "GET",
         success: function (monitorData) {
           const container = $("#monitor-container").empty();
@@ -714,7 +714,7 @@
     // Carregar lista de URLs
     function carregarUrls() {
       $.ajax({
-        url: "/api/monitored-sites",
+        url: "/api/monitor",
         type: "GET",
         success: function (urls) {
           const ul = $("#lista-urls").empty();
@@ -740,7 +740,7 @@
     // Excluir URL via API
     function excluirUrl(id) {
       $.ajax({
-        url: `/api/monitored-sites/${id}`,
+        url: `/api/monitor/${id}`,
         type: "DELETE",
         success: function () {
           showToast("URL excluída com sucesso!", "success");
@@ -757,7 +757,7 @@
     // Adicionar nova URL via API
     function adicionarUrl(url) {
       $.ajax({
-        url: "/api/monitored-sites",
+        url: "/api/monitor",
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify({ url }),
