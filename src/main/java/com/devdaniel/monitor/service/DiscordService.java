@@ -14,6 +14,11 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class DiscordService {
 
@@ -22,6 +27,10 @@ public class DiscordService {
 
     @Getter
     private JDA jda;
+
+    // Cooldown por canal: evita flood e rate limit
+    private final Map<String, Instant> lastSentMap = new HashMap<>();
+    private static final long COOLDOWN_SECONDS = 60;
 
     @PostConstruct
     public void init() throws Exception {
@@ -39,10 +48,11 @@ public class DiscordService {
                 )
                 .setMemberCachePolicy(MemberCachePolicy.NONE)
                 .setChunkingFilter(ChunkingFilter.NONE)
+                .setRequestTimeoutRetry(false) // evita retries automáticos que causam bloqueios
                 .build()
                 .awaitReady();
 
-        System.out.println("Discord Bot conectado!");
+        System.out.println("✅ Discord Bot conectado com sucesso!");
     }
 
     @PreDestroy
@@ -53,15 +63,32 @@ public class DiscordService {
     }
 
     public void sendMessageToChannel(String channelId, String message) {
+        // Anti-flood por canal
+        Instant now = Instant.now();
+        Instant lastSent = lastSentMap.getOrDefault(channelId, Instant.MIN);
+
+        if (Duration.between(lastSent, now).getSeconds() < COOLDOWN_SECONDS) {
+            System.out.println("⏳ Cooldown ativo para canal " + channelId + ", ignorando envio.");
+            return;
+        }
+
         try {
             TextChannel channel = jda.getTextChannelById(channelId);
             if (channel != null) {
-                channel.sendMessage(message).queue();
+                channel.sendMessage(message).queue(
+                        success -> {
+                            lastSentMap.put(channelId, now);
+                            System.out.println("✅ Alerta enviado ao canal: " + channelId);
+                        },
+                        error -> System.err.println("❌ Erro ao enviar mensagem: " + error.getMessage())
+                );
             } else {
-                System.err.println("Canal Discord não encontrado: " + channelId);
+                System.err.println("⚠️ Canal Discord não encontrado: " + channelId);
             }
         } catch (ErrorResponseException e) {
-            System.err.println("Erro ao enviar mensagem Discord: " + e.getMessage());
+            System.err.println("❌ Discord API error: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("❌ Erro inesperado ao enviar mensagem: " + e.getMessage());
         }
     }
 }
