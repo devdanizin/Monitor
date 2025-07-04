@@ -30,6 +30,10 @@ public class User {
     @JsonIgnore
     private List<MonitoredSite> sites;
 
+    //@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JsonIgnore
+    //private List<Payment> payments;
+
     @Column(nullable = false)
     private Integer limited;
 

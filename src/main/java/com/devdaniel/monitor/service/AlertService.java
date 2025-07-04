@@ -20,7 +20,6 @@ public class AlertService {
     private String fromEmail;
 
     public void sendAlertToUser(User user, String mensagem) {
-        // Uncomment if quiser mandar e-mail também:
         // sendEmail(user, mensagem);
         //sendDiscordAlert(user, mensagem);
     }

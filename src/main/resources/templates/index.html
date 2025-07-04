@@ -741,7 +741,7 @@
                         </div>
                     </div>
 
-                    <!-- Card: Progresso do Plano -->
+                    <!-- Card: Progresso do Plano
                     <div class="col-md-4">
                         <div id="card-progresso-plano" class="card shadow border-start border-4 rounded">
                             <div class="card-body">
@@ -753,7 +753,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>-->
 
                 </div>
             </div>
@@ -842,7 +842,6 @@
     let chart = null;
 
     function carregarInfoUsuario() {
-        // Buscar nome do usuário
         $.ajax({
             url: "/api/user/me",
             type: "GET",
@@ -854,7 +853,6 @@
             }
         });
 
-        // Buscar status do plano
         $.ajax({
             url: "/api/user/plan-status",
             type: "GET",
@@ -897,11 +895,11 @@
                     .addClass(corClasse.split(" ")[0]);
 
                 // Barra de progresso
-                $("#barra-progresso-plano")
-                    .removeClass("bg-success bg-warning bg-danger")
-                    .addClass(progressBarClass)
-                    .css("width", `${percentUsado}%`)
-                    .text(`${percentUsado}%`);
+                //$("#barra-progresso-plano")
+                //    .removeClass("bg-success bg-warning bg-danger")
+                //    .addClass(progressBarClass)
+                //    .css("width", `${percentUsado}%`)
+                //    .text(`${percentUsado}%`);
             },
             error: function() {
                 // Dados simulados para teste visual

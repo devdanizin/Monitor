@@ -12,7 +12,6 @@ public class DiscordService {
     /*@Getter
     //private JDA jda;
 
-    // Cooldown por canal: evita flood e rate limit
     private final Map<String, Instant> lastSentMap = new HashMap<>();
     private static final long COOLDOWN_SECONDS = 60;
 
@@ -32,7 +31,7 @@ public class DiscordService {
                 )
                 .setMemberCachePolicy(MemberCachePolicy.NONE)
                 .setChunkingFilter(ChunkingFilter.NONE)
-                .setRequestTimeoutRetry(false) // evita retries automáticos que causam bloqueios
+                .setRequestTimeoutRetry(false)
                 .build()
                 .awaitReady();
 
@@ -47,7 +46,6 @@ public class DiscordService {
     }
 
     public void sendMessageToChannel(String channelId, String message) {
-        // Anti-flood por canal
         Instant now = Instant.now();
         Instant lastSent = lastSentMap.getOrDefault(channelId, Instant.MIN);
 
