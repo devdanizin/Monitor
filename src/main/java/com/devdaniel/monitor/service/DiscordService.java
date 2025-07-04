@@ -8,6 +8,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +25,20 @@ public class DiscordService {
 
     @PostConstruct
     public void init() throws Exception {
-        jda = JDABuilder.createDefault(botToken, GatewayIntent.GUILD_MESSAGES)
+        jda = JDABuilder.create(botToken,
+                        GatewayIntent.GUILD_MESSAGES,
+                        GatewayIntent.MESSAGE_CONTENT)
+                .disableCache(
+                        CacheFlag.VOICE_STATE,
+                        CacheFlag.EMOJI,
+                        CacheFlag.STICKER,
+                        CacheFlag.SCHEDULED_EVENTS
+                )
+                .setMemberCachePolicy(MemberCachePolicy.NONE)
+                .setChunkingFilter(ChunkingFilter.NONE)
                 .build()
                 .awaitReady();
+
         System.out.println("Discord Bot conectado!");
     }
 
