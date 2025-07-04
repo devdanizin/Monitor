@@ -32,7 +32,10 @@ public class DiscordService {
                         CacheFlag.VOICE_STATE,
                         CacheFlag.EMOJI,
                         CacheFlag.STICKER,
-                        CacheFlag.SCHEDULED_EVENTS
+                        CacheFlag.SCHEDULED_EVENTS,
+                        CacheFlag.ACTIVITY,
+                        CacheFlag.CLIENT_STATUS,
+                        CacheFlag.ONLINE_STATUS
                 )
                 .setMemberCachePolicy(MemberCachePolicy.NONE)
                 .setChunkingFilter(ChunkingFilter.NONE)
