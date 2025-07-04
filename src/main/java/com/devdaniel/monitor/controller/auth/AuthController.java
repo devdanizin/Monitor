@@ -1,4 +1,4 @@
-package com.devdaniel.monitor.controller;
+package com.devdaniel.monitor.controller.auth;
 
 import com.devdaniel.monitor.model.User;
 import com.devdaniel.monitor.repository.UserRepository;

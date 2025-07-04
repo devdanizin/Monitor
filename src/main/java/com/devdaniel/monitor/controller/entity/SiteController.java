@@ -1,4 +1,4 @@
-package com.devdaniel.monitor.controller;
+package com.devdaniel.monitor.controller.entity;
 
 import com.devdaniel.monitor.dto.request.MonitoredSiteRequest;
 import com.devdaniel.monitor.dto.response.MonitoredSiteResponse;

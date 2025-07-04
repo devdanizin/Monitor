@@ -1,4 +1,4 @@
-package com.devdaniel.monitor.controller;
+package com.devdaniel.monitor.controller.entity;
 
 import com.devdaniel.monitor.model.MonitorTask;
 import com.devdaniel.monitor.model.User;

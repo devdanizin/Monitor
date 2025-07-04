@@ -1,4 +1,4 @@
-package com.devdaniel.monitor.controller;
+package com.devdaniel.monitor.controller.admin;
 
 import com.devdaniel.monitor.model.User;
 import com.devdaniel.monitor.repository.UserRepository;
@@ -32,7 +32,12 @@ public class AdminUserController {
         if (user.getUsername() == null || user.getUsername().isBlank()) {
             throw new IllegalArgumentException("O campo username é obrigatório");
         }
-        user.setPlanExpiry(nowBrasilia().plusSeconds(2));
+
+        if (userRepo.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("O username já está em uso");
+        }
+
+        user.setPlanExpiry(nowBrasilia().plusMonths(1));
 
         if (user.getPlan() == null) {
             user.setPlan(true);
