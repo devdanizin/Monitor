@@ -22,7 +22,7 @@ public class AlertService {
     public void sendAlertToUser(User user, String mensagem) {
         // Uncomment if quiser mandar e-mail também:
         // sendEmail(user, mensagem);
-        sendDiscordAlert(user, mensagem);
+        //sendDiscordAlert(user, mensagem);
     }
 
     //private void sendEmail(User user, String mensagem) {
