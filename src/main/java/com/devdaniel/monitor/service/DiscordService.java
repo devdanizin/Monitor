@@ -1,23 +1,7 @@
 package com.devdaniel.monitor.service;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
-import lombok.Getter;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.exceptions.ErrorResponseException;
-import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.utils.ChunkingFilter;
-import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class DiscordService {
@@ -25,8 +9,8 @@ public class DiscordService {
     @Value("${discord.bot.token}")
     private String botToken;
 
-    @Getter
-    private JDA jda;
+    /*@Getter
+    //private JDA jda;
 
     // Cooldown por canal: evita flood e rate limit
     private final Map<String, Instant> lastSentMap = new HashMap<>();
@@ -90,5 +74,5 @@ public class DiscordService {
         } catch (Exception e) {
             System.err.println("❌ Erro inesperado ao enviar mensagem: " + e.getMessage());
         }
-    }
+    }*/
 }

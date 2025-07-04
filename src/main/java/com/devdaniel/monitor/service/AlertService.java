@@ -34,12 +34,12 @@ public class AlertService {
     //    sender.send(email);
     //}
 
-    private void sendDiscordAlert(User user, String mensagem) {
-        String channelId = user.getDiscordChannelId();
-        if (channelId != null && !channelId.isBlank()) {
-            discordService.sendMessageToChannel(channelId, mensagem);
-        } else {
-            System.out.println("⚠️ Usuário " + user.getUsername() + " não tem canal Discord configurado.");
-        }
-    }
+    //private void sendDiscordAlert(User user, String mensagem) {
+    //    String channelId = user.getDiscordChannelId();
+    //    if (channelId != null && !channelId.isBlank()) {
+    //        discordService.sendMessageToChannel(channelId, mensagem);
+    //    } else {
+    //        System.out.println("⚠️ Usuário " + user.getUsername() + " não tem canal Discord configurado.");
+    //    }
+    //}
 }
