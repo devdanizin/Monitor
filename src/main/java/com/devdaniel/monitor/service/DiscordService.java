@@ -34,8 +34,7 @@ public class DiscordService {
     @PostConstruct
     public void init() throws Exception {
         jda = JDABuilder.create(botToken,
-                        GatewayIntent.GUILD_MESSAGES,
-                        GatewayIntent.MESSAGE_CONTENT)
+                        GatewayIntent.GUILD_MESSAGES)
                 .disableCache(
                         CacheFlag.VOICE_STATE,
                         CacheFlag.EMOJI,
