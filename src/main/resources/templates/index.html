@@ -996,32 +996,31 @@
         });
     }
 
-
     function carregarMonitoramentos() {
         $.ajax({
             url: "/api/monitor/todos",
             type: "GET",
             success: function(monitorData) {
                 const container = $("#monitor-container").empty();
+
                 if (!monitorData.length) {
                     container.append(`<p class="text-muted fst-italic">Nenhum monitoramento encontrado.</p>`);
                     return;
                 }
-                monitorData.forEach(({
-                    url,
-                    statusCode,
-                    checkedAt
-                }) => {
+
+                monitorData.sort((a, b) => new Date(b.checkedAt) - new Date(a.checkedAt));
+
+                monitorData.forEach(({ url, statusCode, checkedAt }) => {
                     const dt = new Date(checkedAt);
                     const statusClass = (statusCode >= 200 && statusCode < 300) ? "status-ok" : "status-fail";
 
                     const card = $(`
-      <article tabindex="0" class="monitor-card" aria-label="Monitoramento da URL ${url}">
-        <div class="monitor-url">${url}</div>
-        <div class="status-badge ${statusClass}">${statusCode}</div>
-        <div class="monitor-meta">Verificado em ${dt.toLocaleString()}</div>
-      </article>
-    `);
+                        <article tabindex="0" class="monitor-card" aria-label="Monitoramento da URL ${url}">
+                            <div class="monitor-url">${url}</div>
+                            <div class="status-badge ${statusClass}">${statusCode}</div>
+                            <div class="monitor-meta">Verificado em ${dt.toLocaleString()}</div>
+                        </article>
+                    `);
                     container.append(card);
                 });
             },

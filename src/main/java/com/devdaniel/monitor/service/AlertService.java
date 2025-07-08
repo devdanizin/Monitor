@@ -20,8 +20,8 @@ public class AlertService {
     private String fromEmail;
 
     public void sendAlertToUser(User user, String mensagem) {
-        // sendEmail(user, mensagem);
-        //sendDiscordAlert(user, mensagem);
+        //sendEmail(user, mensagem);
+        sendDiscordAlert(user, mensagem);
     }
 
     //private void sendEmail(User user, String mensagem) {
@@ -33,12 +33,12 @@ public class AlertService {
     //    sender.send(email);
     //}
 
-    //private void sendDiscordAlert(User user, String mensagem) {
-    //    String channelId = user.getDiscordChannelId();
-    //    if (channelId != null && !channelId.isBlank()) {
-    //        discordService.sendMessageToChannel(channelId, mensagem);
-    //    } else {
-    //        System.out.println("⚠️ Usuário " + user.getUsername() + " não tem canal Discord configurado.");
-    //    }
-    //}
+    private void sendDiscordAlert(User user, String mensagem) {
+        String channelId = user.getDiscordChannelId();
+        if (channelId != null && !channelId.isBlank()) {
+            discordService.sendMessageToChannel(channelId, mensagem);
+        } else {
+            System.out.println("⚠️ Usuário " + user.getUsername() + " não tem canal Discord configurado.");
+        }
+    }
 }
