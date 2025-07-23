@@ -21,7 +21,6 @@ public class MonitorTask {
     private long responseTime;
     private LocalDateTime checkedAt;
 
-    // Construtor manual (sem id)
     public MonitorTask(String url, int statusCode, long responseTime, LocalDateTime checkedAt) {
         this.url = url;
         this.statusCode = statusCode;

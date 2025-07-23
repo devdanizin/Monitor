@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -63,9 +65,15 @@ public class MonitorService {
             int status = connection.getResponseCode();
             long duration = System.currentTimeMillis() - start;
 
-            return new MonitorTask(url, status, duration, LocalDateTime.now());
+            ZonedDateTime nowInBrasilia = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"));
+            LocalDateTime checkedAtBrasilia = nowInBrasilia.toLocalDateTime();
+
+            return new MonitorTask(url, status, duration, checkedAtBrasilia);
         } catch (Exception e) {
-            return new MonitorTask(url, 0, -1, LocalDateTime.now());
+            ZonedDateTime nowInBrasilia = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"));
+            LocalDateTime checkedAtBrasilia = nowInBrasilia.toLocalDateTime();
+
+            return new MonitorTask(url, 0, -1, checkedAtBrasilia);
         }
     }
 }
