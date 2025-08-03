@@ -47,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/login", "/css/**", "/js/**", "/img/**", "/webjars/**"
                         ).permitAll()
-                        .requestMatchers("/admin.html", "/api/admin/**", "/api/auth/**").hasRole("ADMIN")
+                        .requestMatchers("/admin", "/api/admin/**", "/api/auth/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)
