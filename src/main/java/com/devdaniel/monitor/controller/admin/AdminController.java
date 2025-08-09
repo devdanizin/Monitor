@@ -54,7 +54,7 @@ public class AdminController {
     @DeleteMapping("/all")
     public void deletarTodos() {
         userRepo.deleteAll();
-    }
+    }   
 
     @PatchMapping("/{id}/plan")
     public User atualizarPlan(@PathVariable Long id, @RequestBody Map<String, Boolean> planRequest) {
