@@ -76,4 +76,8 @@ public class MonitorService {
             return new MonitorTask(url, 0, -1, checkedAtBrasilia);
         }
     }
+
+    public void deleteAll() {
+        monitorRepository.deleteAll();
+    }
 }
