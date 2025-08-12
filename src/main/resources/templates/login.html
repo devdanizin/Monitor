@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
@@ -15,18 +15,27 @@
 
     <style>
         body {
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             font-family: 'Inter', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
+            flex-direction: column;
+            color: #e2e8f0;
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1b2735);
+            background-size: 400% 400%;
+            animation: gradientMove 12s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .login-card {
-            background-color: #1e293b;
-            color: #e2e8f0;
+            background-color: rgba(30, 41, 59, 0.9);
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             padding: 2.5rem;
@@ -45,7 +54,6 @@
             background-color: #1e293b;
             border-color: #3b82f6;
             box-shadow: none;
-            color: #fff;
         }
 
         .btn-primary {
@@ -62,20 +70,59 @@
             font-size: 0.9rem;
         }
 
+        .logo {
+            display: block;
+            max-width: 150px;
+            margin: 0 auto 20px auto;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            background: rgba(0, 0, 0, 0.25);
+            display: flex;
+            justify-content: center;
+        }
+
+        .credits {
+            position: fixed;
+            bottom: 8px;
+            right: 20px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (prefers-color-scheme: light) {
+            .logo {
+                content: url('[[@{/1.png}]]');
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .logo {
+                content: url('[[@{/2.png}]]');
+            }
         }
     </style>
 </head>
 <body>
 <div class="login-card">
+    <!-- Logo com Thymeleaf -->
+    <img class="logo" th:src="@{/1.png}" width="86px" height="86px" style="border-radius: 12px" alt="Logo CloneXpert" />
+
     <h2 class="text-center mb-4">Acessar Conta</h2>
 
     <div th:if="${param.error}" class="alert alert-danger text-center">
-            <span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}">
-                Erro de autenticação.
-            </span>
+        <span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}">Erro de autenticação.</span>
     </div>
 
     <div th:if="${param.logout}" class="alert alert-success text-center">
@@ -95,6 +142,16 @@
             <button type="submit" class="btn btn-primary">Entrar</button>
         </div>
     </form>
+</div>
+
+<!-- Rodapé -->
+<footer>
+    Todos direitos reservados CloneXpert
+</footer>
+
+<!-- Créditos -->
+<div class="credits">
+    Criado por Stellar Agency
 </div>
 
 <!-- Bootstrap Bundle -->
