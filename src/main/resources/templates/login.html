@@ -34,6 +34,7 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Responsividade geral */
         .login-card {
             background-color: rgba(30, 41, 59, 0.9);
             border-radius: 16px;
@@ -54,6 +55,7 @@
             background-color: #1e293b;
             border-color: #3b82f6;
             box-shadow: none;
+
         }
 
         .btn-primary {
@@ -74,6 +76,14 @@
             display: block;
             max-width: 150px;
             margin: 0 auto 20px auto;
+            width: 100%;
+            height: auto;
+        }
+
+        img[th\:src] {
+            width: 100%;
+            max-width: 220px;
+            height: auto;
         }
 
         footer {
@@ -112,14 +122,61 @@
                 content: url('[[@{/2.png}]]');
             }
         }
+
+        @media (max-width: 600px) {
+            .login-card {
+                padding: 1.2rem;
+                max-width: 98vw;
+                border-radius: 10px;
+            }
+
+            .logo {
+                max-width: 90px;
+                margin-bottom: 12px;
+            }
+
+            img[th\:src] {
+                max-width: 140px;
+            }
+
+            footer {
+                font-size: 0.8rem;
+                padding: 6px 8px;
+            }
+
+            .credits {
+                font-size: 0.75rem;
+                right: 8px;
+                bottom: 4px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .login-card {
+                padding: 0.5rem;
+                border-radius: 6px;
+            }
+        }
+
+        /* Ajuste do vídeo de fundo para mobile */
+        #bg-video {
+            min-width: 100vw;
+            min-height: 100vh;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
+<!-- Fundo em vídeo -->
+<video autoplay muted loop id="bg-video" style="position: fixed; right: 0; bottom: 0; min-width: 100vw; min-height: 100vh; width: auto; height: auto; z-index: -1; object-fit: cover;">
+    <source th:src="@{/fundo.mp4}" type="video/mp4" />
+    Seu navegador não suporta vídeo em background.
+</video>
 <div class="login-card">
-    <!-- Logo com Thymeleaf -->
-    <img class="logo" th:src="@{/1.png}" width="86px" height="86px" style="border-radius: 12px" alt="Logo CloneXpert" />
-
-    <h2 class="text-center mb-4">Acessar Conta</h2>
+    <!-- Imagem sem fundo substituindo o título -->
+    <img th:src="@{/sem%20fundo.png}" alt="Logo sem fundo" class="mb-4" style="display: block; margin: 0 auto; max-width: 220px;" />
 
     <div th:if="${param.error}" class="alert alert-danger text-center">
         <span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}">Erro de autenticação.</span>
@@ -146,7 +203,7 @@
 
 <!-- Rodapé -->
 <footer>
-    Todos direitos reservados CloneXpert
+    Todos direitos reservados VoidStatus
 </footer>
 
 <!-- Créditos -->
