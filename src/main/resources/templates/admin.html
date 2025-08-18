@@ -175,9 +175,44 @@
             gap: 0.5rem;
             max-width: 320px;
         }
+
+        /* Overlay bloqueio mobile */
+        #mobile-blocker {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(30,41,59,0.97);
+            color: #fff;
+            font-size: 1.3rem;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            padding: 0 2rem;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        #mobile-blocker .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 900px) {
+            #mobile-blocker {
+                display: flex;
+            }
+            body > *:not(#mobile-blocker) {
+                filter: blur(2px) grayscale(0.7);
+                pointer-events: none !important;
+                user-select: none !important;
+            }
+        }
     </style>
 </head>
 <body>
+<div id="mobile-blocker">
+    <div class="icon">📵</div>
+    <div>Este sistema só pode ser acessado por um computador.<br>Por favor, utilize um desktop ou notebook.</div>
+</div>
 
 <!-- Toast Container -->
 <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
