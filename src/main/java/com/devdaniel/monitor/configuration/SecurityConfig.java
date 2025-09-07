@@ -51,7 +51,7 @@ public class SecurityConfig {
                                 "/fundo.mp4",
                                 "/sem fundo.png"
                         ).permitAll()
-                        .requestMatchers("/admin", "/api/admin/**", "/api/auth/**").hasRole("ADMIN")
+                        .requestMatchers("/admin", "/api/admin/**", "/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)
