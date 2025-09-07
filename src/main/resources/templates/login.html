@@ -71,7 +71,20 @@
         .form-control {
             background-color: #0f172a;
             border: 1px solid #334155;
-            color: #e2e8f0;
+            color: #fff;
+            caret-color: #3b82f6; /* Destaque azul ao digitar */
+        }
+
+        .form-control::placeholder {
+            color: #cbd5e1;
+            opacity: 1;
+        }
+        /* Corrige cor do texto digitado (input) para branco em todos estados */
+        .form-control,
+        .form-control:focus,
+        .form-control:active {
+            color: #fff !important;
+            background-color: #0f172a;
         }
 
         .form-control:focus {
